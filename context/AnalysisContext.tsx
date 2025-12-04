@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { DeepAnalysisData, Asset, MarketData, AnalysisContextType, Language } from '../types';
 import { getLatestDeepAnalysis } from '../services/marketDataService';
+import { generateDeepAssetAnalysis } from '../services/geminiService';
 
 const AnalysisContext = createContext<AnalysisContextType | undefined>(undefined);
 
@@ -12,7 +13,7 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   const triggerAnalysis = async (asset: Asset, data: MarketData, lang: Language) => {
     if (isAnalyzing) return;
-    
+
     setIsAnalyzing(true);
     setProgress(5);
     setAnalysisResult(null);
@@ -30,9 +31,15 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
       // Wait 4 seconds to simulate deep processing
       await new Promise(resolve => setTimeout(resolve, 4000));
 
-      // Fetch the "Cached" high-quality report (Simulates 10AM/6PM/2AM background run)
-      const result = await getLatestDeepAnalysis();
-      
+      // Try to generate real analysis first
+      let result = await generateDeepAssetAnalysis(asset, data, lang);
+
+      // Fallback to cached/mock data if real analysis fails or returns null (e.g. no API key)
+      if (!result) {
+        console.log("Falling back to cached analysis");
+        result = await getLatestDeepAnalysis();
+      }
+
       clearInterval(interval);
       setProgress(100);
       setAnalysisResult(result);
