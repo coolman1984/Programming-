@@ -80,7 +80,7 @@ export const fetchLiveGoldPrice = async (): Promise<number> => {
 // Data store
 let DATA_STORE: Record<AssetId, MarketData> | null = null;
 let lastFetchTime = 0;
-const CACHE_DURATION = 60000; // 1 minute cache
+const CACHE_DURATION = 300000; // 5 minute cache to prevent frequent updates
 
 // Initialize data store with real API data
 const initializeDataStore = async (): Promise<Record<AssetId, MarketData>> => {

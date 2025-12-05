@@ -1,13 +1,14 @@
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard';
-import ArticlePage from './pages/ArticlePage';
-import AnalysisReportPage from './pages/AnalysisReportPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AnalysisProvider } from './context/AnalysisContext';
 import { LanguageProvider } from './context/LanguageContext';
+
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ArticlePage = lazy(() => import('./pages/ArticlePage'));
+const AnalysisReportPage = lazy(() => import('./pages/AnalysisReportPage'));
 
 const App: React.FC = () => {
   return (
@@ -17,12 +18,14 @@ const App: React.FC = () => {
           <HashRouter>
             <Layout>
               <ErrorBoundary>
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/article/:id" element={<ArticlePage />} />
-                  <Route path="/report" element={<AnalysisReportPage />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/article/:id" element={<ArticlePage />} />
+                    <Route path="/report" element={<AnalysisReportPage />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </Suspense>
               </ErrorBoundary>
             </Layout>
           </HashRouter>

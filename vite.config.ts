@@ -15,5 +15,17 @@ export default defineConfig(({ mode }) => {
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY || env.API_KEY),
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY || env.API_KEY),
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            ui: ['lucide-react', 'framer-motion', 'recharts'],
+            ai: ['@google/genai'],
+            utils: ['clsx', 'date-fns', 'tailwind-merge'],
+          },
+        },
+      },
+    },
   };
 });

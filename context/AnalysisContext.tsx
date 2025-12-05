@@ -36,7 +36,6 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       // Fallback to cached/mock data if real analysis fails or returns null (e.g. no API key)
       if (!result) {
-        console.log("Falling back to cached analysis");
         result = await getLatestDeepAnalysis();
       }
 

@@ -2,9 +2,15 @@
 import { GoogleGenAI, Chat } from "@google/genai";
 import { MarketArticle, NewsItem, Language, SearchResult, SearchSource, Asset, MarketData, DeepAnalysisData, AnalysisSource } from "../types";
 
-// API Key validation helper
+// API Key validation helper - supports both Vite (browser) and Node.js environments
 const getApiKey = (): string | null => {
-  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+  // Try Vite environment variables first (browser)
+  const viteKey = (import.meta as any).env?.VITE_GEMINI_API_KEY;
+  // Fall back to Node.js environment variables (if available)
+  const nodeKey = typeof process !== 'undefined' ? (process.env?.API_KEY || process.env?.GEMINI_API_KEY) : null;
+
+  const apiKey = viteKey || nodeKey;
+
   if (!apiKey ||
     apiKey === 'your_gemini_api_key_here' ||
     apiKey === 'PLACEHOLDER_API_KEY' ||
@@ -372,6 +378,88 @@ const searchSentimentDomain = async (ai: GoogleGenAI, data: MarketData, today: s
   }
 };
 
+// Search for Gold Mining and Supply Chain news
+const searchMiningSupplyDomain = async (ai: GoogleGenAI, data: MarketData, today: string): Promise<SearchDomainResult> => {
+  const prompt = `
+    Search for the LATEST GOLD MINING and SUPPLY CHAIN news (December 2025):
+    
+    1. Major gold miners production reports (Newmont, Barrick, Agnico Eagle)
+    2. Gold mining costs (AISC - All-In Sustaining Costs)
+    3. New gold discoveries and exploration results
+    4. Mining M&A activity and consolidation
+    5. Gold recycling and scrap supply data
+    6. Mine production disruptions or strikes
+    7. Environmental regulations affecting gold mining
+    8. Gold mining stocks valuations vs gold price
+    
+    Current Gold Price: $${data.currentPrice}/oz
+    Date: ${today}
+    
+    Include specific production numbers, cost figures, and company performance data.
+    Format citations as [Source: Name] after each claim.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }]
+      }
+    });
+
+    return {
+      domain: 'mining_supply',
+      text: response.text || '',
+      sources: extractSourcesFromResponse(response)
+    };
+  } catch (error) {
+    console.error("Mining supply search failed:", error);
+    return { domain: 'mining_supply', text: '', sources: [] };
+  }
+};
+
+// Search for Physical Gold and Consumer Demand
+const searchPhysicalDemandDomain = async (ai: GoogleGenAI, data: MarketData, today: string): Promise<SearchDomainResult> => {
+  const prompt = `
+    Search for the LATEST PHYSICAL GOLD DEMAND and CONSUMER news (December 2025):
+    
+    1. India gold imports and jewelry demand
+    2. China gold demand and Shanghai Gold Exchange premiums
+    3. Gold jewelry sales trends globally
+    4. Wedding season demand in Asia
+    5. Gold coin and bar sales (US Mint, Perth Mint)
+    6. Bullion dealer premiums and availability
+    7. Gold vending machines and retail innovations
+    8. Cultural and religious festivals driving gold demand
+    
+    Current Gold Price: $${data.currentPrice}/oz
+    Date: ${today}
+    
+    Include specific import/export numbers, demand tonnage, and regional trends.
+    Format citations as [Source: Name] after each claim.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }]
+      }
+    });
+
+    return {
+      domain: 'physical_demand',
+      text: response.text || '',
+      sources: extractSourcesFromResponse(response)
+    };
+  } catch (error) {
+    console.error("Physical demand search failed:", error);
+    return { domain: 'physical_demand', text: '', sources: [] };
+  }
+};
+
 // Aggregate all sources and remove duplicates
 const aggregateSources = (results: SearchDomainResult[]): AnalysisSource[] => {
   const allSources: AnalysisSource[] = [];
@@ -405,41 +493,31 @@ Sources Used: ${r.sources.map(s => s.source).join(', ')}
 export const generateDeepAssetAnalysis = async (asset: Asset, data: MarketData, language: Language = 'en'): Promise<DeepAnalysisData | null> => {
   const ai = getClient();
   if (!ai) {
-    console.log("AI client unavailable, will use fallback analysis data");
     return null;
   }
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-  console.log("🔍 Starting Deep Multi-Source Analysis...");
-  console.log("📊 Phase 1: Executing parallel research across 4 domains...");
-
-  // PHASE 1: Execute parallel searches across 4 domains
-  const [macroResult, technicalResult, geopoliticalResult, sentimentResult] = await Promise.all([
+  // PHASE 1: Execute parallel searches across 6 domains for comprehensive coverage
+  const [macroResult, technicalResult, geopoliticalResult, sentimentResult, miningResult, physicalResult] = await Promise.all([
     searchMacroDomain(ai, data, today),
     searchTechnicalDomain(ai, data, today),
     searchGeopoliticalDomain(ai, data, today),
-    searchSentimentDomain(ai, data, today)
+    searchSentimentDomain(ai, data, today),
+    searchMiningSupplyDomain(ai, data, today),
+    searchPhysicalDemandDomain(ai, data, today)
   ]);
 
-  console.log(`✅ Macro sources: ${macroResult.sources.length}`);
-  console.log(`✅ Technical sources: ${technicalResult.sources.length}`);
-  console.log(`✅ Geopolitical sources: ${geopoliticalResult.sources.length}`);
-  console.log(`✅ Sentiment sources: ${sentimentResult.sources.length}`);
-
-  // PHASE 2: Aggregate all sources (targeting 20+)
-  const allResults = [macroResult, technicalResult, geopoliticalResult, sentimentResult];
+  // PHASE 2: Aggregate all sources (targeting 25+)
+  const allResults = [macroResult, technicalResult, geopoliticalResult, sentimentResult, miningResult, physicalResult];
   const aggregatedSources = aggregateSources(allResults);
   const researchContext = buildSynthesisContext(allResults);
-
-  console.log(`📚 Phase 2: Aggregated ${aggregatedSources.length} unique sources`);
-  console.log("🧠 Phase 3: Synthesizing grand narrative...");
 
   // PHASE 3: Generate the Grand Narrative Synthesis
   const synthesisPrompt = `
 You are a Chief Global Market Strategist at Goldman Sachs writing the DEFINITIVE Gold Market Analysis Report.
 
-=== RESEARCH DATA FROM 4 SPECIALIZED DOMAINS ===
+=== RESEARCH DATA FROM 6 SPECIALIZED DOMAINS ===
 ${researchContext}
 
 === YOUR TASK ===
@@ -557,8 +635,6 @@ CRITICAL RULES:
     result.sources = finalSources;
     result.generated_at = today;
 
-    console.log(`✅ Analysis complete! Total sources: ${result.sources.length}`);
-
     return result as DeepAnalysisData;
   } catch (error) {
     console.error("Deep analysis synthesis failed:", error);
@@ -569,7 +645,6 @@ CRITICAL RULES:
 export const generateMarketArticle = async (seedNews: NewsItem, language: Language = 'en'): Promise<MarketArticle | null> => {
   const ai = getClient();
   if (!ai) {
-    console.log("AI client unavailable for article generation");
     return null;
   }
 

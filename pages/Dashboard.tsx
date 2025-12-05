@@ -30,9 +30,11 @@ const Dashboard: React.FC = () => {
    }, [analysisResult, isAnalyzing, navigate]);
 
    useEffect(() => {
+      // Pause clock during analysis to prevent re-renders
+      if (isAnalyzing) return;
       const timer = setInterval(() => setTime(new Date()), 1000);
       return () => clearInterval(timer);
-   }, []);
+   }, [isAnalyzing]);
 
    const fetchData = async () => {
       try {
