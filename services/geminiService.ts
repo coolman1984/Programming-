@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Chat } from "@google/genai";
-import { MarketArticle, NewsItem, Language, SearchResult, SearchSource, Asset, MarketData, DeepAnalysisData } from "../types";
+import { MarketArticle, NewsItem, Language, SearchResult, SearchSource, Asset, MarketData, DeepAnalysisData, AnalysisSource } from "../types";
 
 // API Key validation helper
 const getApiKey = (): string | null => {
@@ -71,6 +71,66 @@ const cleanAndParseJSON = (text: string): any => {
   }
 };
 
+// --- HELPER: Extract sources from grounding metadata ---
+const extractSourcesFromResponse = (response: any): AnalysisSource[] => {
+  const sources: AnalysisSource[] = [];
+  const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+
+  if (chunks) {
+    chunks.forEach((chunk: any, index: number) => {
+      if (chunk.web) {
+        sources.push({
+          title: chunk.web.title || `Source ${index + 1}`,
+          source: extractDomain(chunk.web.uri),
+          url: chunk.web.uri,
+          summary: chunk.web.title,
+          relevance_score: 0.9 - (index * 0.02), // Higher relevance for earlier sources
+          sentiment: 'neutral',
+          impact_label: index < 5 ? 'High Impact' : index < 12 ? 'Medium Impact' : 'Low Impact'
+        });
+      }
+    });
+  }
+  return sources;
+};
+
+// Helper to extract domain name from URL
+const extractDomain = (url: string): string => {
+  try {
+    const domain = new URL(url).hostname.replace('www.', '');
+    const knownSources: Record<string, string> = {
+      'bloomberg.com': 'Bloomberg',
+      'reuters.com': 'Reuters',
+      'kitco.com': 'Kitco',
+      'gold.org': 'World Gold Council',
+      'federalreserve.gov': 'Federal Reserve',
+      'investing.com': 'Investing.com',
+      'tradingview.com': 'TradingView',
+      'wsj.com': 'Wall Street Journal',
+      'cnbc.com': 'CNBC',
+      'marketwatch.com': 'MarketWatch',
+      'ft.com': 'Financial Times',
+      'zerohedge.com': 'ZeroHedge',
+      'goldprice.org': 'GoldPrice.org',
+      'bullionvault.com': 'BullionVault',
+      'apmex.com': 'APMEX',
+      'jmbullion.com': 'JM Bullion',
+      'mining.com': 'Mining.com',
+      'spglobal.com': 'S&P Global',
+      'imf.org': 'IMF',
+      'worldbank.org': 'World Bank',
+      'cmegroup.com': 'CME Group',
+      'lbma.org.uk': 'LBMA',
+      'xe.com': 'XE',
+      'fxstreet.com': 'FXStreet',
+      'dailyfx.com': 'DailyFX'
+    };
+    return knownSources[domain] || domain;
+  } catch {
+    return 'Unknown Source';
+  }
+};
+
 export const createChatSession = (): Chat | null => {
   const ai = getClient();
   if (!ai) {
@@ -80,7 +140,7 @@ export const createChatSession = (): Chat | null => {
 
   try {
     return ai.chats.create({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-2.0-flash',
       config: {
         systemInstruction: "You are a Senior Global Macro Strategist specialized in Gold (XAU/USD). Focus on the Federal Reserve, DXY, and Geopolitics.",
       }
@@ -110,7 +170,7 @@ export const searchMarketQuery = async (query: string, language: Language = 'en'
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }]
@@ -141,6 +201,207 @@ export const searchMarketQuery = async (query: string, language: Language = 'en'
   }
 };
 
+// ============================================================================
+// DEEP SEARCH & ANALYSIS SYSTEM
+// Multi-query strategy for comprehensive 20+ source coverage
+// ============================================================================
+
+interface SearchDomainResult {
+  domain: string;
+  text: string;
+  sources: AnalysisSource[];
+}
+
+// Search for Macro-Economic news and data
+const searchMacroDomain = async (ai: GoogleGenAI, data: MarketData, today: string): Promise<SearchDomainResult> => {
+  const prompt = `
+    Search for the LATEST news and analysis on these MACRO-ECONOMIC topics affecting gold prices (December 2025):
+    
+    1. Federal Reserve interest rate decisions and FOMC statements
+    2. US Dollar Index (DXY) movements and forecasts
+    3. US Treasury yields (10-year, 2-year) and real yields
+    4. US Inflation data (CPI, PCE) and expectations
+    5. US Employment data and economic indicators
+    6. Global central bank monetary policies (ECB, BOJ, BOE)
+    
+    Current Gold Price: $${data.currentPrice}/oz
+    Date: ${today}
+    
+    Provide a detailed summary with specific data points, quotes from officials, and cite each source inline.
+    Format citations as [Source: Name] after each claim.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }]
+      }
+    });
+
+    return {
+      domain: 'macro',
+      text: response.text || '',
+      sources: extractSourcesFromResponse(response)
+    };
+  } catch (error) {
+    console.error("Macro search failed:", error);
+    return { domain: 'macro', text: '', sources: [] };
+  }
+};
+
+// Search for Technical Analysis data
+const searchTechnicalDomain = async (ai: GoogleGenAI, data: MarketData, today: string): Promise<SearchDomainResult> => {
+  const prompt = `
+    Search for the LATEST TECHNICAL ANALYSIS on Gold (XAU/USD) from professional trading sources (December 2025):
+    
+    1. Key support and resistance levels for XAU/USD
+    2. RSI (Relative Strength Index) current readings
+    3. Moving averages (50-day, 200-day MA) and golden/death crosses
+    4. MACD signals and momentum indicators
+    5. Fibonacci retracement levels
+    6. Trading volume analysis and open interest in COMEX gold futures
+    7. Professional trader sentiment and COT report data
+    
+    Current Gold Price: $${data.currentPrice}/oz
+    24h High: $${data.high24h} | 24h Low: $${data.low24h}
+    Date: ${today}
+    
+    Include specific price levels, chart patterns, and technical signals.
+    Format citations as [Source: Name] after each claim.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }]
+      }
+    });
+
+    return {
+      domain: 'technical',
+      text: response.text || '',
+      sources: extractSourcesFromResponse(response)
+    };
+  } catch (error) {
+    console.error("Technical search failed:", error);
+    return { domain: 'technical', text: '', sources: [] };
+  }
+};
+
+// Search for Geopolitical news
+const searchGeopoliticalDomain = async (ai: GoogleGenAI, data: MarketData, today: string): Promise<SearchDomainResult> => {
+  const prompt = `
+    Search for the LATEST GEOPOLITICAL news and events affecting gold as a safe-haven asset (December 2025):
+    
+    1. Central bank gold purchases (China, Russia, India, Turkey, etc.)
+    2. Global conflicts and tensions affecting markets
+    3. Trade relations and sanctions news
+    4. Currency wars and de-dollarization trends
+    5. Middle East tensions and their market impact
+    6. US-China relations and economic competition
+    7. Energy prices and their correlation with gold
+    
+    Current Gold Price: $${data.currentPrice}/oz
+    Date: ${today}
+    
+    Provide specific details on how each geopolitical factor impacts gold demand.
+    Format citations as [Source: Name] after each claim.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }]
+      }
+    });
+
+    return {
+      domain: 'geopolitical',
+      text: response.text || '',
+      sources: extractSourcesFromResponse(response)
+    };
+  } catch (error) {
+    console.error("Geopolitical search failed:", error);
+    return { domain: 'geopolitical', text: '', sources: [] };
+  }
+};
+
+// Search for Market Sentiment and ETF flows
+const searchSentimentDomain = async (ai: GoogleGenAI, data: MarketData, today: string): Promise<SearchDomainResult> => {
+  const prompt = `
+    Search for the LATEST MARKET SENTIMENT and GOLD ETF data (December 2025):
+    
+    1. SPDR Gold Trust (GLD) inflows/outflows
+    2. iShares Gold Trust (IAU) holdings changes
+    3. COMEX gold futures positioning
+    4. Goldman Sachs, JP Morgan, Bank of America gold price forecasts
+    5. Retail investor sentiment on gold
+    6. Institutional investor allocations to gold
+    7. Gold mining stocks performance (GDX, GDXJ)
+    
+    Current Gold Price: $${data.currentPrice}/oz
+    Date: ${today}
+    
+    Include specific numbers for ETF flows and analyst price targets.
+    Format citations as [Source: Name] after each claim.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }]
+      }
+    });
+
+    return {
+      domain: 'sentiment',
+      text: response.text || '',
+      sources: extractSourcesFromResponse(response)
+    };
+  } catch (error) {
+    console.error("Sentiment search failed:", error);
+    return { domain: 'sentiment', text: '', sources: [] };
+  }
+};
+
+// Aggregate all sources and remove duplicates
+const aggregateSources = (results: SearchDomainResult[]): AnalysisSource[] => {
+  const allSources: AnalysisSource[] = [];
+  const seenUrls = new Set<string>();
+
+  results.forEach(result => {
+    result.sources.forEach(source => {
+      if (!seenUrls.has(source.url)) {
+        seenUrls.add(source.url);
+        allSources.push({
+          ...source,
+          summary: `${result.domain.toUpperCase()}: ${source.summary || source.title}`
+        });
+      }
+    });
+  });
+
+  return allSources;
+};
+
+// Build the synthesis context from all search results
+const buildSynthesisContext = (results: SearchDomainResult[]): string => {
+  return results.map(r => `
+=== ${r.domain.toUpperCase()} RESEARCH ===
+${r.text}
+Sources Used: ${r.sources.map(s => s.source).join(', ')}
+`).join('\n\n');
+};
+
+// Main Deep Analysis Function with Multi-Query Strategy
 export const generateDeepAssetAnalysis = async (asset: Asset, data: MarketData, language: Language = 'en'): Promise<DeepAnalysisData | null> => {
   const ai = getClient();
   if (!ai) {
@@ -150,49 +411,108 @@ export const generateDeepAssetAnalysis = async (asset: Asset, data: MarketData, 
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-  const prompt = `
-      You are a Chief Global Market Strategist at a top investment bank (e.g., Goldman Sachs, JP Morgan).
-      Task: Perform a "Deep Strategic Analysis" of the Global Gold Market (XAU/USD).
-      
-      Current Price: $${data.currentPrice} / oz
-      Date: ${today} (December 2025 Context)
+  console.log("🔍 Starting Deep Multi-Source Analysis...");
+  console.log("📊 Phase 1: Executing parallel research across 4 domains...");
 
-      STRICT RULES:
-      1. **SOURCES**: Use 16+ distinct, high-quality global sources (Bloomberg, Reuters, Kitco, World Gold Council, Federal Reserve).
-      2. **DATE**: Do NOT use data from 2024. Focus on Q4 2025.
-      3. **FOCUS**: Federal Reserve Policy, US Dollar Index (DXY), US Treasuries, Geopolitics, Central Bank Reserves.
-      4. **OUTPUT**: Professional Financial English.
+  // PHASE 1: Execute parallel searches across 4 domains
+  const [macroResult, technicalResult, geopoliticalResult, sentimentResult] = await Promise.all([
+    searchMacroDomain(ai, data, today),
+    searchTechnicalDomain(ai, data, today),
+    searchGeopoliticalDomain(ai, data, today),
+    searchSentimentDomain(ai, data, today)
+  ]);
 
-      Required JSON Format:
-      {
-        "headline": "Professional Headline (e.g., Gold Eyes $2700...)",
-        "executive_summary": "300-word deep dive article narrative.",
-        "macro_analysis": "Fed Policy, Inflation, Real Yields analysis.",
-        "technical_analysis": "Key levels, RSI, Moving Averages for XAU/USD.",
-        "geopolitical_analysis": "Global risk assessment.",
-        "metrics": [
-           {"label": "DXY Index", "value": "102.xx", "trend": "down", "color": "red", "description": "USD Strength"}
-        ],
-        "overall_sentiment_score": 85,
-        "confidence_score": 90,
-        "drivers": [
-           {"name": "Fed Pivot", "impact_score": 95, "sentiment": "bullish", "description": "Rate cut expectations."}
-        ],
-        "sources": [
-           {"title": "Article Title", "source": "Bloomberg", "url": "https://...", "summary": "Brief insight..."},
-           ... (16 items)
-        ],
-        "factors_bearish": ["Reason 1", "Reason 2"],
-        "factors_bullish": ["Reason 1", "Reason 2"]
-      }
-    `;
+  console.log(`✅ Macro sources: ${macroResult.sources.length}`);
+  console.log(`✅ Technical sources: ${technicalResult.sources.length}`);
+  console.log(`✅ Geopolitical sources: ${geopoliticalResult.sources.length}`);
+  console.log(`✅ Sentiment sources: ${sentimentResult.sources.length}`);
+
+  // PHASE 2: Aggregate all sources (targeting 20+)
+  const allResults = [macroResult, technicalResult, geopoliticalResult, sentimentResult];
+  const aggregatedSources = aggregateSources(allResults);
+  const researchContext = buildSynthesisContext(allResults);
+
+  console.log(`📚 Phase 2: Aggregated ${aggregatedSources.length} unique sources`);
+  console.log("🧠 Phase 3: Synthesizing grand narrative...");
+
+  // PHASE 3: Generate the Grand Narrative Synthesis
+  const synthesisPrompt = `
+You are a Chief Global Market Strategist at Goldman Sachs writing the DEFINITIVE Gold Market Analysis Report.
+
+=== RESEARCH DATA FROM 4 SPECIALIZED DOMAINS ===
+${researchContext}
+
+=== YOUR TASK ===
+Using ALL the research above, create a comprehensive "Grand Narrative" analysis that:
+
+1. **WEAVES** all sources together into a coherent story
+2. **CITES** sources inline using [Source: Name] format for EVERY major claim
+3. **REVEALS** the hidden meaning behind the news - what's REALLY happening
+4. **CONNECTS** dots between macro, technical, and geopolitical factors
+5. **QUANTIFIES** with specific numbers, dates, and price levels
+
+=== CURRENT MARKET DATA ===
+Gold Spot Price: $${data.currentPrice}/oz
+24h Change: ${data.change24hPercent > 0 ? '+' : ''}${data.change24hPercent.toFixed(2)}%
+24h Range: $${data.low24h} - $${data.high24h}
+Date: ${today}
+
+=== REQUIRED JSON OUTPUT ===
+{
+  "headline": "Compelling headline that captures the main thesis (e.g., 'Gold Surges Past $2800 as Fed Pivot Signals New Bull Run')",
+  
+  "executive_summary": "A 500-word narrative that reads like a premium Bloomberg article. MUST include inline citations [Source: Name] for every major claim. Weave together the macro, technical, and geopolitical factors into one coherent story. Explain what's BEHIND the news and what it MEANS for gold.",
+  
+  "macro_analysis": "Deep dive into Fed policy, inflation, USD, and yields. Include specific data points and inline citations [Source: Name]. Explain cause-and-effect relationships.",
+  
+  "technical_analysis": "Professional chart analysis with specific price levels, indicators, and patterns. Include RSI values, MA levels, support/resistance. Cite technical analysis sources.",
+  
+  "geopolitical_analysis": "Analysis of global risks, central bank buying, and safe-haven flows. Include specific tonnage numbers for central bank purchases. Cite geopolitical sources.",
+  
+  "sector_analysis": "Analysis of gold mining sector, ETF flows, and institutional positioning.",
+  
+  "consumer_analysis": "Analysis of physical gold demand, jewelry markets, and retail investor behavior.",
+  
+  "future_outlook": "6-12 month price outlook with specific price targets and scenarios. Must cite analyst forecasts [Source: Bank Name].",
+  
+  "metrics": [
+    {"label": "DXY Index", "value": "actual value", "trend": "up/down/stable", "color": "green/red/blue/amber", "description": "Impact on gold"},
+    {"label": "10Y Treasury", "value": "X.XX%", "trend": "up/down/stable", "color": "green/red/blue/amber", "description": "Real yield impact"},
+    {"label": "Fed Funds Rate", "value": "X.XX%", "trend": "up/down/stable", "color": "green/red/blue/amber", "description": "Policy outlook"},
+    {"label": "Gold ETF Flows", "value": "+/- X tonnes", "trend": "up/down/stable", "color": "green/red/blue/amber", "description": "Investor sentiment"}
+  ],
+  
+  "overall_sentiment_score": 0-100 (0=extremely bearish, 100=extremely bullish),
+  "confidence_score": 0-100 (based on source quality and agreement),
+  
+  "drivers": [
+    {"name": "Driver Name", "impact_score": 0-100, "sentiment": "bullish/bearish/neutral", "description": "Detailed explanation with source citation"}
+  ],
+  
+  "sources": [
+    {"title": "Article Title", "source": "Publication Name", "url": "https://...", "summary": "Key insight from this source", "relevance_score": 0.0-1.0, "sentiment": "positive/negative/neutral", "impact_label": "High Impact/Medium Impact/Low Impact"}
+  ],
+  
+  "factors_bullish": ["Factor 1 with [Source: Name]", "Factor 2 with [Source: Name]", ...],
+  "factors_bearish": ["Factor 1 with [Source: Name]", "Factor 2 with [Source: Name]", ...]
+}
+
+CRITICAL RULES:
+1. EVERY claim MUST have an inline citation [Source: Name]
+2. Include at least 20 sources in the sources array
+3. Be specific with numbers, dates, and price levels
+4. Connect the dots - explain what news MEANS, not just what happened
+5. Write like a $500/month premium financial newsletter
+6. Language: ${language === 'ar' ? 'Arabic' : 'English'}
+`;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-pro',
-      contents: prompt,
+      model: 'gemini-2.0-flash',
+      contents: synthesisPrompt,
       config: {
         tools: [{ googleSearch: {} }],
+        temperature: 0.7
       }
     });
 
@@ -202,28 +522,46 @@ export const generateDeepAssetAnalysis = async (asset: Asset, data: MarketData, 
       return null;
     }
 
-    const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-    if (chunks && result.sources) {
-      let chunkIndex = 0;
-      result.sources = result.sources.map((s: any) => {
-        const matchingChunk = chunks.find((c: any) => c.web?.title?.includes(s.source) || c.web?.title?.includes(s.title));
-        if (matchingChunk?.web?.uri) {
-          return { ...s, url: matchingChunk.web.uri };
+    // Merge AI-generated sources with our aggregated sources
+    const finalSources = [...(result.sources || [])];
+
+    // Add any sources from our parallel searches that weren't included
+    aggregatedSources.forEach(aggSource => {
+      const exists = finalSources.some(s => s.url === aggSource.url || s.title === aggSource.title);
+      if (!exists && finalSources.length < 25) {
+        finalSources.push(aggSource);
+      }
+    });
+
+    // Also add sources from synthesis response grounding
+    const synthesisChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+    if (synthesisChunks) {
+      synthesisChunks.forEach((chunk: any) => {
+        if (chunk.web) {
+          const exists = finalSources.some(s => s.url === chunk.web.uri);
+          if (!exists && finalSources.length < 30) {
+            finalSources.push({
+              title: chunk.web.title,
+              source: extractDomain(chunk.web.uri),
+              url: chunk.web.uri,
+              summary: chunk.web.title,
+              relevance_score: 0.8,
+              sentiment: 'neutral',
+              impact_label: 'Medium Impact'
+            });
+          }
         }
-        const currentChunk = chunks[chunkIndex];
-        if (currentChunk?.web?.uri) {
-          const uri = currentChunk.web.uri;
-          chunkIndex = (chunkIndex + 1) % chunks.length;
-          return { ...s, url: uri };
-        }
-        return s;
       });
     }
 
+    result.sources = finalSources;
     result.generated_at = today;
+
+    console.log(`✅ Analysis complete! Total sources: ${result.sources.length}`);
+
     return result as DeepAnalysisData;
   } catch (error) {
-    console.error("Deep analysis failed:", error);
+    console.error("Deep analysis synthesis failed:", error);
     return null;
   }
 };
@@ -247,7 +585,7 @@ export const generateMarketArticle = async (seedNews: NewsItem, language: Langua
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       contents: prompt,
       config: { responseMimeType: 'application/json' }
     });
