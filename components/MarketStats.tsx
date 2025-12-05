@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, BarChart3, Activity, Zap } from 'lucide-react';
-import { cn, formatCurrency, formatPercent, getPriceChangeColor, getPriceChangeBg } from '../../src/lib/utils.js';
+import { cn, formatCurrency, formatPercent, getPriceChangeColor, getPriceChangeBg } from '../src/lib/utils';
 
 interface MarketStatsProps {
     high24h: number;
