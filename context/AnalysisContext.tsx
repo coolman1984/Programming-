@@ -11,7 +11,7 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [progress, setProgress] = useState(0);
   const [analysisResult, setAnalysisResult] = useState<DeepAnalysisData | null>(null);
 
-  const triggerAnalysis = async (asset: Asset, data: MarketData, lang: Language) => {
+  const triggerAnalysis = async (asset: Asset, data: MarketData, lang: Language, query?: string) => {
     if (isAnalyzing) return;
 
     setIsAnalyzing(true);
@@ -32,7 +32,7 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
       await new Promise(resolve => setTimeout(resolve, 4000));
 
       // Try to generate real analysis first
-      let result = await generateDeepAssetAnalysis(asset, data, lang);
+      let result = await generateDeepAssetAnalysis(asset, data, lang, query);
 
       // Fallback to cached/mock data if real analysis fails or returns null (e.g. no API key)
       if (!result) {

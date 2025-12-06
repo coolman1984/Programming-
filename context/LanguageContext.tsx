@@ -1,55 +1,31 @@
 
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, ReactNode, useCallback } from 'react';
 import { LanguageContextType, Language } from '../types';
 import { translations } from '../translations';
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// Type-safe translation key type
-type TranslationKey = keyof typeof translations.en;
-
-// Storage key for persisting language preference
-const LANGUAGE_STORAGE_KEY = 'gold-insight-language';
-
-// Get initial language from storage or default to 'en'
-const getInitialLanguage = (): Language => {
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (stored === 'en' || stored === 'ar') {
-      return stored;
-    }
-  }
-  return 'en';
-};
-
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>(getInitialLanguage);
-  const [dir, setDir] = useState<'ltr' | 'rtl'>(getInitialLanguage() === 'ar' ? 'rtl' : 'ltr');
+  // Hardcoded to English
+  const language: Language = 'en';
+  const dir = 'ltr';
 
-  // Update language and persist to storage
+  // No-op for setLanguage since we only support English
   const setLanguage = useCallback((lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+    console.warn('Language switching is disabled. Only English is supported.');
   }, []);
 
-  // Translation function with type safety
+  // Simplified translation function
   const t = useCallback((key: string): string => {
-    const langTranslations = translations[language] as Record<string, string> | undefined;
-    if (langTranslations && key in langTranslations) {
-      return langTranslations[key];
-    }
-    // Fallback to English if key not found in current language
     const enTranslations = translations.en as Record<string, string>;
     return enTranslations[key] || key;
-  }, [language]);
+  }, []);
 
-  // Update document attributes when language changes
-  useEffect(() => {
-    const newDir = language === 'ar' ? 'rtl' : 'ltr';
-    setDir(newDir);
-    document.documentElement.lang = language;
-    document.documentElement.dir = newDir;
-  }, [language]);
+  // Force document direction/lang
+  React.useEffect(() => {
+    document.documentElement.lang = 'en';
+    document.documentElement.dir = 'ltr';
+  }, []);
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t, dir }}>

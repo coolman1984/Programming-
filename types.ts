@@ -1,6 +1,6 @@
 
 export type AssetId = 'gold-global';
-export type Language = 'en' | 'ar';
+export type Language = 'en';
 
 export interface Asset {
   id: AssetId;
@@ -67,7 +67,7 @@ export interface FinancialMetric {
 export interface AnalysisDriver {
   name: string;
   impact_score: number;
-  sentiment: 'bullish' | 'bearish' | 'neutral'; 
+  sentiment: 'bullish' | 'bearish' | 'neutral';
   description: string;
 }
 
@@ -79,6 +79,25 @@ export interface AnalysisSource {
   relevance_score: number;
   sentiment: 'neutral' | 'positive' | 'negative';
   impact_label: 'High Impact' | 'Medium Impact' | 'Low Impact';
+}
+
+export interface WeightedFactor {
+  title: string;
+  description: string;
+  weight: number; // 0-100
+  confidence: number; // 0-100
+  source_url?: string;
+  source_name?: string;
+  type: 'strengthening' | 'weakening';
+}
+
+export interface ForecastPeriod {
+  price: number;
+  change_percent: number;
+  confidence_min: number;
+  confidence_max: number;
+  certainty_score: number; // 0-100
+  sentiment: 'bullish' | 'bearish' | 'neutral';
 }
 
 export interface DeepAnalysisData {
@@ -95,9 +114,44 @@ export interface DeepAnalysisData {
   confidence_score: number;
   drivers: AnalysisDriver[];
   sources: AnalysisSource[];
-  factors_bearish: string[]; 
-  factors_bullish: string[]; 
+  factors_bearish: string[];
+  factors_bullish: string[];
   generated_at: string;
+
+  // New fields for the updated UI
+  outlook_analysis?: {
+    sentiment: 'bullish' | 'bearish' | 'neutral';
+    strengthening_count: number;
+    weakening_count: number;
+    strength_distribution: number;
+  };
+
+  current_price_drivers?: {
+    summary: string;
+    drivers: {
+      name: string;
+      description: string;
+      weight: number;
+      impact: 'positive' | 'negative' | 'neutral';
+      stats?: string;
+    }[];
+  };
+
+  historical_context?: string;
+
+  forecasts?: {
+    tomorrow: ForecastPeriod;
+    week: ForecastPeriod;
+    month: ForecastPeriod;
+  };
+
+  factors?: {
+    strengthening: WeightedFactor[];
+    weakening: WeightedFactor[];
+  };
+
+  risk_overview?: string;
+  market_outlook?: string;
 }
 
 export interface ChatMessage {
@@ -111,7 +165,7 @@ export interface AnalysisContextType {
   isAnalyzing: boolean;
   progress: number;
   analysisResult: DeepAnalysisData | null;
-  triggerAnalysis: (asset: Asset, data: MarketData, lang: Language) => Promise<void>;
+  triggerAnalysis: (asset: Asset, data: MarketData, lang: Language, query?: string) => Promise<void>;
   clearAnalysis: () => void;
 }
 
@@ -119,7 +173,7 @@ export interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
-  dir: 'ltr' | 'rtl';
+  dir: 'ltr';
 }
 
 export interface AIPrediction {

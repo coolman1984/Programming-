@@ -82,7 +82,7 @@ const Dashboard: React.FC = () => {
                      <RefreshCw size={22} className={loading ? "animate-spin" : ""} />
                   </button>
                </div>
-               <p className="text-slate-400 text-lg">{t('dashboard.subtitle')}</p>
+               <p className="text-slate-400 text-base">{t('dashboard.subtitle')}</p>
                {error && (
                   <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-3 text-red-400">
                      <span className="text-sm">{error}</span>
@@ -126,7 +126,7 @@ const Dashboard: React.FC = () => {
                            </div>
                         </div>
 
-                        <h2 className="text-3xl font-bold text-white mb-3 font-serif">{t('analysis.waiting.title')}</h2>
+                        <h2 className="text-lg font-bold text-white mb-3 font-serif">{t('analysis.waiting.title')}</h2>
                         <div className="flex items-center gap-2 text-slate-400 text-base mb-8 bg-slate-900/50 px-4 py-2 rounded-full border border-slate-800">
                            <ScanSearch size={16} className="text-amber-500 animate-pulse" />
                            <span className="animate-pulse">Scanning Global Sources (16+)...</span>
@@ -148,10 +148,10 @@ const Dashboard: React.FC = () => {
                         <div className="bg-amber-500/10 p-5 rounded-2xl border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.1)]">
                            <BrainCircuit size={48} className="text-amber-500" />
                         </div>
-                        <h2 className="text-4xl font-bold text-white font-serif relative z-10">{t('dashboard.hero.title')}</h2>
+                        <h2 className="text-lg font-bold text-white font-serif relative z-10">{t('dashboard.hero.title')}</h2>
                      </div>
 
-                     <p className="text-slate-400 text-xl mb-10 relative z-10 max-w-lg leading-relaxed font-medium">
+                     <p className="text-slate-400 text-base mb-10 relative z-10 max-w-lg leading-relaxed font-medium">
                         {t('dashboard.hero.subtitle')}
                      </p>
 
@@ -188,7 +188,7 @@ const Dashboard: React.FC = () => {
          <div>
             <div className="flex items-center gap-4 mb-8 border-b border-slate-800 pb-3">
                <Circle className="fill-amber-500 text-amber-500 animate-pulse" size={14} />
-               <h2 className="text-3xl font-bold text-white font-serif">{t('dashboard.insights.title')}</h2>
+               <h2 className="text-lg font-bold text-white font-serif">{t('dashboard.insights.title')}</h2>
             </div>
             {loading && news.length === 0 ? (
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

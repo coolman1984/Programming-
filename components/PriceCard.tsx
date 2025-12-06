@@ -56,7 +56,7 @@ const PriceCard: React.FC<PriceCardProps> = ({
                         <span className="text-2xl">🥇</span>
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold text-white">Gold Spot</h2>
+                        <h2 className="text-lg font-bold text-white">Gold Spot</h2>
                         <p className="text-slate-400 text-sm">XAU/USD · Troy Ounce</p>
                     </div>
                 </div>

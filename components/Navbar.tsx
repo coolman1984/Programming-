@@ -25,8 +25,8 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuToggle, isMenuOpen }) => {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                    ? 'glass border-b border-slate-700/50'
-                    : 'bg-transparent'
+                ? 'glass border-b border-slate-700/50'
+                : 'bg-transparent'
                 }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,15 +74,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuToggle, isMenuOpen }) => {
                             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-500 rounded-full" />
                         </motion.button>
 
-                        {/* Language Toggle */}
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
-                            className="px-3 py-2 rounded-xl glass-hover text-slate-400 hover:text-white text-sm font-medium"
-                        >
-                            {language === 'en' ? 'عربي' : 'EN'}
-                        </motion.button>
+                        {/* Language Toggle Removed */}
 
                         {/* Settings */}
                         <motion.button
@@ -136,8 +128,8 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children, active }) => (
     <a
         href={href}
         className={`relative px-3 py-2 text-sm font-medium transition-colors ${active
-                ? 'text-amber-400'
-                : 'text-slate-400 hover:text-white'
+            ? 'text-amber-400'
+            : 'text-slate-400 hover:text-white'
             }`}
     >
         {children}

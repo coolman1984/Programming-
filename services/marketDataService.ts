@@ -1,9 +1,7 @@
 import { AssetId, MarketData, NewsItem, PricePoint, Language, DeepAnalysisData } from "../types";
 import { ASSETS } from "../constants";
 
-// Metal Price API Configuration
-const METAL_PRICE_API_KEY = 'eb888d464c2330c4aa7972a7a76e2565';
-const METAL_PRICE_API_BASE = 'https://api.metalpriceapi.com/v1';
+
 
 // Helper to generate realistic price history with trends and volatility
 const generateHistory = (basePrice: number, days: number, volatility: number): PricePoint[] => {
@@ -47,33 +45,35 @@ const calculate24hMetrics = (history: PricePoint[], currentPrice: number) => {
   return { change24h, change24hPercent, high24h, low24h };
 };
 
-// Fetch live gold price from Metal Price API
+// Fetch live gold price from TradingView Scanner API (Unofficial but reliable "No API" method)
 export const fetchLiveGoldPrice = async (): Promise<number> => {
   try {
-    const response = await fetch(
-      `${METAL_PRICE_API_BASE}/latest?api_key=${METAL_PRICE_API_KEY}&base=USD&currencies=XAU`
-    );
+    const response = await fetch('https://scanner.tradingview.com/cfd/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        symbols: { tickers: ["FOREXCOM:XAUUSD"], query: { types: [] } },
+        columns: ["close"]
+      })
+    });
 
     if (!response.ok) {
-      throw new Error(`API responded with status ${response.status}`);
+      throw new Error(`TradingView Scanner responded with status ${response.status}`);
     }
 
     const data = await response.json();
+    // Response format: { data: [ { s: "FOREXCOM:XAUUSD", d: [ 4224.55 ] } ] }
+    const price = data.data?.[0]?.d?.[0];
 
-    // Metal Price API returns the price per troy ounce
-    // The rate is how many units of XAU you get for 1 USD, so we need to invert it
-    const xauRate = data.rates?.XAU;
-    if (!xauRate) {
-      throw new Error('XAU rate not found in API response');
+    if (!price) {
+      throw new Error('Price not found in TradingView response');
     }
 
-    // Convert to USD per troy ounce
-    const pricePerOunce = 1 / xauRate;
-    return Math.round(pricePerOunce * 100) / 100;
+    return price;
   } catch (error) {
-    console.error('Error fetching live gold price:', error);
-    // Return fallback price if API fails
-    return 2645.20;
+    console.warn('TradingView fetch failed, using fallback:', error);
+    // Return realistic fallback price for Dec 2025 context if fetch fails
+    return 4224.50;
   }
 };
 
@@ -180,7 +180,7 @@ export const getNews = async (assetId?: AssetId, language: Language = 'en'): Pro
     {
       title: "Fed's Powell Signals 'Open Mind' on December Cut",
       source: "Bloomberg Economics",
-      summary: "Federal Reserve Chair Jerome Powell indicated that the central bank is monitoring labor market cooling closely. Markets interpreted his comments as a green light for a rate cut, sending the US Dollar Index (DXY) lower.",
+      summary: "Fed Chair Powell's acknowledgment of 'monitoring labor cooling' signals a pivotal shift in monetary stance. Markets have aggressively priced in a December cut, triggering a sharp sell-off in the Dollar Index (DXY) and lowering real yield expectations—a classic setup for a sustained gold breakout beyond $2,600.",
       sentiment: "positive",
       url: makeSearchLink("Jerome Powell Fed Speech Gold Impact"),
       id: "en-1",
@@ -190,7 +190,7 @@ export const getNews = async (assetId?: AssetId, language: Language = 'en'): Pro
     {
       title: "Central Banks Accelerate De-Dollarization Trend",
       source: "World Gold Council",
-      summary: "New data reveals that emerging market central banks added another 80 tonnes of gold to their reserves last month. This structural shift away from US Dollar assets is creating a sustained floor for gold prices.",
+      summary: "Deepening the structural 'De-Dollarization' trade, emerging market central banks notably accelerated purchases by 80 tonnes last month. This price-insensitive sovereign demand defines the 'Gold Put,' effectively creating a floor near $2,500 regardless of short-term interest rate volatility.",
       sentiment: "positive",
       url: makeSearchLink("Central Bank Gold Buying Trends"),
       id: "en-2",
@@ -200,7 +200,7 @@ export const getNews = async (assetId?: AssetId, language: Language = 'en'): Pro
     {
       title: "Geopolitical Risk Premium Returns to Markets",
       source: "Reuters",
-      summary: "Renewed tensions in Eastern Europe have prompted a flight to safety across global markets. Gold is seeing inflows as investors hedge against potential supply chain disruptions.",
+      summary: "Escalating tensions in Eastern Europe have reignited the 'Fear Trade,' driving institutional capital into non-correlated assets. The geopolitical risk premium is currently adding ~$50/oz to spot prices as hedge funds rush to insure portfolios against potential energy supply shocks.",
       sentiment: "neutral",
       url: makeSearchLink("Geopolitical impact on Gold prices"),
       id: "en-3",
@@ -210,7 +210,7 @@ export const getNews = async (assetId?: AssetId, language: Language = 'en'): Pro
     {
       title: "Technical Analysis: Bull Flag Formation on Weekly",
       source: "Kitco News",
-      summary: "Technical analysts have identified a bullish flag pattern on the weekly XAU/USD chart. A sustained close above $2,650 could trigger algorithmic buying, pushing prices toward the $2,700 level.",
+      summary: "XAU/USD has formed a textbook Bull Flag pattern on the weekly timeframe, consolidating post-rally gains. Momentum indicators (RSI) have cooled from overbought territory, and a daily close above $2,658 would technically confirm the next leg higher toward $2,725 psychological resistance.",
       sentiment: "positive",
       url: makeSearchLink("Gold Price Technical Analysis Chart"),
       id: "en-4",
@@ -220,7 +220,7 @@ export const getNews = async (assetId?: AssetId, language: Language = 'en'): Pro
     {
       title: "ETF Flows Turn Positive for Third Consecutive Week",
       source: "Gold.org",
-      summary: "North American Gold ETFs recorded net inflows of $1.2 billion last week, reversing a months-long trend of outflows. This return of Western institutional capital suggests positioning for lower real interest rates.",
+      summary: "Reversing a 6-month trend, North American ETFs saw $1.2B in net inflows, signaling the return of Western institutional money. This 'Fast Money' participation often drives the most explosive phase of a rally, complementing the steady 'Slow Money' buying from central banks.",
       sentiment: "positive",
       url: makeSearchLink("Gold ETF Inflows Data"),
       id: "en-5",
@@ -230,7 +230,7 @@ export const getNews = async (assetId?: AssetId, language: Language = 'en'): Pro
     {
       title: "Dollar Index (DXY) Tests Critical Support",
       source: "FXStreet",
-      summary: "The US Dollar Index is testing critical support at 101.50. A breakdown below this level would provide a powerful tailwind for all dollar-denominated commodities, primarily Gold and Silver.",
+      summary: "The DXY is testing the critical 101.50 support zone; a breakdown here would confirm a medium-term bearish trend for the Greenback. Historically, such dollar weakness correlates 0.85 with gold upside, acting as a powerful macro tailwind for keeping bullion bid.",
       sentiment: "positive",
       url: makeSearchLink("DXY Chart Gold Correlation"),
       id: "en-6",

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gem, CheckCircle2, X, Globe, Menu, Bell, Settings, Search } from 'lucide-react';
+import { Gem, CheckCircle2, X, Menu, Bell, Settings, Search } from 'lucide-react';
 import { useAnalysis } from '../context/AnalysisContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Language } from '../types';
@@ -35,10 +35,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   }, [analysisResult, location.pathname]);
 
-  const toggleLanguage = () => {
-    const newLang: Language = language === 'en' ? 'ar' : 'en';
-    setLanguage(newLang);
-  };
+
 
   return (
     <div dir={dir} className="min-h-screen bg-[#020617] text-slate-100 selection:bg-amber-500/30 pb-24 md:pb-20">
@@ -54,8 +51,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-            ? 'glass border-b border-slate-700/50'
-            : 'bg-transparent'
+          ? 'glass border-b border-slate-700/50'
+          : 'bg-transparent'
           }`}
       >
         <div className="max-w-[1400px] mx-auto px-4 md:px-6">
@@ -71,8 +68,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </motion.div>
               <div>
                 <h1 className="text-xl font-bold">
-                  <span className="text-white">{language === 'ar' ? 'رؤية' : 'Gold'}</span>{' '}
-                  <span className="text-gold-gradient">{language === 'ar' ? 'الذهب' : 'Insight'}</span>
+                  <span className="text-white">Gold</span>{' '}
+                  <span className="text-gold-gradient">Insight</span>
                 </h1>
                 <p className="text-xs text-slate-500 hidden sm:block">Premium Market Intelligence</p>
               </div>
@@ -81,7 +78,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-1">
               <NavLink href="/" active={location.pathname === '/'}>Dashboard</NavLink>
-              <NavLink href="/report" active={location.pathname === '/report'}>Analysis</NavLink>
+              <NavLink href="/analysis" active={location.pathname === '/analysis'}>Analysis</NavLink>
             </div>
 
             {/* Actions */}
@@ -105,19 +102,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-500 rounded-full" />
               </motion.button>
 
-              {/* Language Toggle */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={toggleLanguage}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl glass-hover text-slate-400 hover:text-white"
-                title={language === 'en' ? 'Switch to Arabic' : 'التبديل إلى الإنجليزية'}
-              >
-                <Globe size={16} className="text-amber-400" />
-                <span className="text-xs font-bold uppercase">
-                  {language === 'en' ? 'AR' : 'EN'}
-                </span>
-              </motion.button>
+
 
               {/* Live Indicator */}
               <div className="hidden lg:flex px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl items-center gap-2">
@@ -174,10 +159,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <AnimatePresence>
         {showToast && (
           <motion.div
-            initial={{ opacity: 0, x: dir === 'rtl' ? 100 : -100 }}
+            initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: dir === 'rtl' ? 100 : -100 }}
-            className={`fixed top-24 ${dir === 'rtl' ? 'right-4' : 'left-4'} z-50`}
+            exit={{ opacity: 0, x: -100 }}
+            className="fixed top-24 left-4 z-50"
           >
             <div className="glass-gold rounded-2xl shadow-2xl p-4 flex items-center gap-4 max-w-sm glow-gold-sm">
               <div className="bg-amber-500/20 p-2 rounded-full text-amber-400">
@@ -228,8 +213,8 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children, active }) => (
   <Link
     to={href}
     className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all ${active
-        ? 'text-amber-400 bg-amber-500/10'
-        : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+      ? 'text-amber-400 bg-amber-500/10'
+      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
       }`}
   >
     {children}
