@@ -69,7 +69,7 @@ const Analysis: React.FC = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t('analysis.search.placeholder')}
-            className="w-full bg-[#0f172a] border border-slate-700 text-white rounded-3xl py-6 pl-16 pr-40 text-lg shadow-2xl focus:outline-none focus:border-amber-500/50 transition-all placeholder:text-slate-600 cursor-default"
+            className="w-full bg-[#111111] border border-slate-700 text-white rounded-3xl py-6 pl-16 pr-40 text-lg shadow-2xl focus:outline-none focus:border-amber-500/50 transition-all placeholder:text-slate-600 cursor-default"
           />
           <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500" size={28} />
           <button
@@ -96,7 +96,7 @@ const Analysis: React.FC = () => {
               <button
                 key={i}
                 onClick={() => setQuery(s.text)}
-                className="text-left p-6 bg-[#0f172a] border border-slate-800 rounded-2xl hover:bg-slate-800 hover:border-amber-500/30 transition-all group flex items-start gap-4 shadow-lg hover:shadow-amber-500/5 hover:-translate-y-1 duration-300"
+                className="text-left p-6 bg-[#111111] border border-slate-800 rounded-2xl hover:bg-slate-800 hover:border-amber-500/30 transition-all group flex items-start gap-4 shadow-lg hover:shadow-amber-500/5 hover:-translate-y-1 duration-300"
               >
                 <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 group-hover:border-slate-700 transition-colors">
                   {s.icon}
@@ -147,7 +147,7 @@ const Analysis: React.FC = () => {
                     href={source.uri}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 bg-[#0f172a] border border-slate-800 rounded-lg hover:border-slate-600 transition-all group"
+                    className="flex items-center gap-3 p-3 bg-[#111111] border border-slate-800 rounded-lg hover:border-slate-600 transition-all group"
                   >
                     <div className="bg-slate-800 p-2 rounded text-slate-400 group-hover:text-white transition-colors">
                       <Globe size={16} />

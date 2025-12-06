@@ -1,9 +1,9 @@
 
+
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gem, CheckCircle2, X, Menu, Bell, Settings, Search } from 'lucide-react';
-import { useAnalysis } from '../context/AnalysisContext';
+import { Menu, Settings, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Language } from '../types';
 import { refreshMarketData } from '../services/marketDataService';
@@ -15,8 +15,6 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
-  const { analysisResult } = useAnalysis();
-  const [showToast, setShowToast] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t, dir, language, setLanguage } = useLanguage();
@@ -27,15 +25,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Show notification when analysis completes
-  useEffect(() => {
-    if (analysisResult && location.pathname !== '/report') {
-      setShowToast(true);
-      const timer = setTimeout(() => setShowToast(false), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [analysisResult, location.pathname]);
 
   // Refresh market data on navigation (silent background refresh)
   useEffect(() => {
@@ -140,37 +129,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </motion.div>
       </main>
 
-      {/* Report Ready Toast */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            className="fixed top-24 left-4 z-50"
-          >
-            <div className="glass-gold rounded-2xl shadow-2xl p-4 flex items-center gap-4 max-w-sm glow-gold-sm">
-              <div className="bg-amber-500/20 p-2 rounded-full text-amber-400">
-                <CheckCircle2 size={24} />
-              </div>
-              <div className="flex-1">
-                <h4 className="text-white font-bold text-sm">{t('layout.report_ready')}</h4>
-                <p className="text-slate-400 text-xs">{t('layout.report_complete')}</p>
-              </div>
-              <Link
-                to="/report"
-                onClick={() => setShowToast(false)}
-                className="text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors"
-              >
-                {t('layout.view')}
-              </Link>
-              <button onClick={() => setShowToast(false)} className="text-slate-500 hover:text-white transition-colors">
-                <X size={14} />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Footer */}
       <footer className="fixed bottom-0 left-0 right-0 glass border-t border-slate-800/50 py-3">

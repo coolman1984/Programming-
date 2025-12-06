@@ -53,7 +53,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
          {/* FINANCIAL METRICS CARDS */}
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {data.metrics && data.metrics.map((metric, idx) => (
-               <div key={idx} className="bg-[#111111] border border-slate-800 rounded-2xl p-6 flex flex-col items-center text-center shadow-lg hover:border-amber-500/30 transition-colors group relative">
+               <div key={idx} className="bg-[#111111] border border-amber-500/20 rounded-2xl p-6 flex flex-col items-center text-center shadow-lg hover:border-amber-500/30 transition-colors group relative">
                   <div className="flex items-center gap-2 mb-3">
                      <span className="text-slate-400 text-sm font-bold uppercase tracking-wider">{metric.label}</span>
                      <div className="text-slate-600 group-hover:text-amber-400 transition-colors cursor-help" title={metric.description}>
@@ -74,7 +74,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                      {metric.trend.toUpperCase()}
                   </span>
 
-                  <div className="mt-5 pt-4 border-t border-slate-800 w-full">
+                  <div className="mt-5 pt-4 border-t border-amber-500/20 w-full">
                      <p className="text-xs text-slate-400 italic leading-relaxed">
                         "{metric.description || "Key financial indicator."}"
                      </p>
@@ -84,7 +84,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
          </div>
 
          {/* EXECUTIVE SUMMARY - With inline citation highlighting */}
-         <div className="bg-[#111111] border border-slate-800 rounded-2xl p-10 relative overflow-hidden shadow-2xl">
+         <div className="bg-[#111111] border border-amber-500/20 rounded-2xl p-10 relative overflow-hidden shadow-2xl">
             <div className={`absolute top-0 right-0 w-96 h-96 blur-[120px] rounded-full opacity-10 pointer-events-none ${isGood ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
             <div className="relative z-10">
                <div className="flex items-center gap-3 mb-6">
@@ -120,8 +120,8 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
 
          {/* DETAILED SECTIONS */}
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-[#111111] border border-slate-800 rounded-2xl p-8">
-               <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-slate-800 pb-4 font-serif">
+            <div className="bg-[#111111] border border-amber-500/20 rounded-2xl p-8">
+               <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-amber-500/20 pb-4 font-serif">
                   <Activity size={24} className="text-blue-400" /> {t('analysis.global_macro')}
                </h3>
                <div className="prose prose-invert prose-base text-slate-400 leading-loose">
@@ -139,8 +139,8 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                </div>
             </div>
 
-            <div className="bg-[#111111] border border-slate-800 rounded-2xl p-8">
-               <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-slate-800 pb-4 font-serif">
+            <div className="bg-[#111111] border border-amber-500/20 rounded-2xl p-8">
+               <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-amber-500/20 pb-4 font-serif">
                   <Globe2 size={24} className="text-amber-400" /> {t('analysis.geopolitical')}
                </h3>
                <div className="prose prose-invert prose-base text-slate-400 leading-loose">
@@ -158,8 +158,8 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                </div>
             </div>
 
-            <div className="lg:col-span-2 bg-[#111111] border border-slate-800 rounded-2xl p-8">
-               <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-slate-800 pb-4 font-serif">
+            <div className="lg:col-span-2 bg-[#111111] border border-amber-500/20 rounded-2xl p-8">
+               <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-amber-500/20 pb-4 font-serif">
                   <BarChart3 size={24} className="text-purple-400" /> {t('analysis.technical')}
                </h3>
                <div className="flex flex-col md:flex-row gap-8">
@@ -176,7 +176,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                         {data.technical_analysis}
                      </ReactMarkdown>
                   </div>
-                  <div className="w-full md:w-1/3 bg-slate-900/50 rounded-2xl border border-slate-800 p-6 flex flex-col items-center justify-center">
+                  <div className="w-full md:w-1/3 bg-slate-900/50 rounded-2xl border border-amber-500/20 p-6 flex flex-col items-center justify-center">
                      <div className="text-sm text-slate-500 uppercase tracking-widest mb-3">AI Confidence</div>
                      <div className="text-6xl font-bold text-white mb-2">{data.confidence_score}%</div>
                      <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden mt-4">
@@ -192,11 +192,11 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
 
          {/* DRIVERS & BALANCE */}
          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-[#111111] border border-slate-800 rounded-2xl p-8">
+            <div className="bg-[#111111] border border-amber-500/20 rounded-2xl p-8">
                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2"><Zap size={20} className="text-amber-400" /> {t('analysis.drivers')}</h3>
                <div className="space-y-5">
                   {data.drivers.map((driver, idx) => (
-                     <div key={idx} className="bg-slate-900/50 rounded-xl p-5 border border-slate-800">
+                     <div key={idx} className="bg-slate-900/50 rounded-xl p-5 border border-amber-500/20">
                         <div className="flex justify-between items-center mb-3">
                            <span className="font-bold text-slate-200 text-base">{driver.name}</span>
                            <span className={`text-xs px-2.5 py-1 rounded font-bold ${driver.sentiment === 'bullish' ? 'bg-emerald-500/20 text-emerald-400' :
@@ -212,7 +212,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                </div>
             </div>
 
-            <div className="bg-[#111111] border border-slate-800 rounded-2xl p-8">
+            <div className="bg-[#111111] border border-amber-500/20 rounded-2xl p-8">
                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2"><ShieldCheck size={20} className="text-blue-400" /> {t('analysis.bull_bear')}</h3>
                <div className="space-y-6">
                   <div>
@@ -229,7 +229,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
          </div>
 
          {/* SOURCES - Categorized by Impact */}
-         <div className="bg-[#111111] border border-slate-800 rounded-2xl p-8">
+         <div className="bg-[#111111] border border-amber-500/20 rounded-2xl p-8">
             <div className="flex items-center justify-between mb-6">
                <h3 className="text-white font-bold text-lg flex items-center gap-2">
                   <BookOpen size={20} className="text-amber-400" />
@@ -292,7 +292,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
                      {lowImpactSources.map((source, idx) => (
-                        <a key={idx} href={source.url} target="_blank" rel="noopener noreferrer" className="bg-slate-900/30 border border-slate-800 rounded-lg p-3 hover:border-slate-600 transition-all block group">
+                        <a key={idx} href={source.url} target="_blank" rel="noopener noreferrer" className="bg-slate-900/30 border border-amber-500/20 rounded-lg p-3 hover:border-slate-600 transition-all block group">
                            <div className="flex justify-between items-start">
                               <h5 className="text-slate-300 font-medium text-xs line-clamp-1 group-hover:text-white transition-colors">{source.title}</h5>
                               <ExternalLink size={12} className="text-slate-700 group-hover:text-slate-400 flex-shrink-0 ml-1" />
@@ -306,7 +306,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
          </div>
 
          {/* TRUST FOOTER */}
-         <div className="text-center py-6 border-t border-slate-800">
+         <div className="text-center py-6 border-t border-amber-500/20">
             <p className="text-slate-500 text-sm">
                Analysis generated on <span className="text-slate-400">{data.generated_at}</span> using{' '}
                <span className="text-amber-400 font-medium">{data.sources.length}+ verified sources</span> from Bloomberg, Reuters, Kitco, World Gold Council, and other authoritative financial sources.

@@ -790,6 +790,8 @@ Date: ${today}
   
   "sector_analysis": "CORE ANALYSIS - C) MARKET SENTIMENT & INVESTOR PSYCHOLOGY (2-3 paragraphs): Explain the shift in market psychology toward gold. Discuss expectations of softer dollar and lower real yields pulling investors back. Cover ETF inflows confirming broad-based demand. Analyze futures positioning suggesting traders preparing for breakout. Note rising trading volumes indicating deeper engagement. Use [Source: Name] citations.",
   
+  "technical_analysis": "TECHNICAL OUTLOOK (XAU/USD) (2-3 paragraphs): Provide detailed technical analysis of gold price action. Cover key support and resistance levels, trend analysis (200-day MA, 50-day MA), RSI and momentum indicators, volume patterns, and chart patterns (head & shoulders, ascending triangles, etc.). Discuss potential breakout or breakdown levels. Include specific price levels ($X,XXX) and timeframes. Use [Source: Name] citations where applicable.",
+  
   "consumer_analysis": "CORE ANALYSIS - D) FUNDAMENTAL / INDUSTRY DYNAMICS (2-3 paragraphs): Discuss supply-demand fundamentals supporting higher prices. Cover plateaued global production, few discoveries, rising extraction costs. Explain structural constraints (regulations, permitting, geopolitical risk in mining regions). On demand side, cover aggressive central bank buying, stable jewelry demand floor, expanding tech uses. Use [Source: Name] citations.",
   
   "data_highlights": "DATA HIGHLIGHTS (bullet format): • DXY movement and gold's relative value • Real yield changes and opportunity cost • ETF holdings trends signaling investor conviction • Central bank purchase levels • Inflation relative to central bank targets. Each point should have specific numbers.",

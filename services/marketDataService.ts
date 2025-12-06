@@ -111,27 +111,76 @@ const fetchFromTradingView = async (): Promise<GoldPriceData | null> => {
   }
 };
 
-// Main fetch function with priority: Metals-API > TradingView > Fallback
-export const fetchLiveGoldData = async (): Promise<GoldPriceData> => {
-  // Try Metals-API first (best free-tier overall)
-  let data = await fetchFromMetalsAPI();
+// PRIMARY: Fetch from GoldPrice.org (no API key needed)
+const fetchFromGoldPriceOrg = async (): Promise<GoldPriceData | null> => {
+  try {
+    // GoldPrice.org has a JSON endpoint that returns live prices
+    const response = await fetch('https://data-asg.goldprice.org/dbXRates/USD', {
+      headers: {
+        'Accept': 'application/json',
+        'Origin': 'https://www.goldprice.org'
+      }
+    });
 
-  // Fallback to TradingView if Metals-API fails
+    if (!response.ok) {
+      throw new Error(`GoldPrice.org responded with ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // GoldPrice.org returns data in this format:
+    // { items: [{ xauPrice: 2650.12, chgXau: 5.50, pcXau: 0.21, ... }], ... }
+    const item = data.items?.[0];
+    if (!item || !item.xauPrice) {
+      throw new Error('Gold price not found in GoldPrice.org response');
+    }
+
+    const price = item.xauPrice;
+    const change = item.chgXau || 0;
+    const prevClose = price - change;
+
+    return {
+      price: Math.round(price * 100) / 100,
+      open: prevClose,
+      high: item.xauHigh || price * 1.003,
+      low: item.xauLow || price * 0.997,
+      prevClose: prevClose,
+      bid: price - 0.50,
+      ask: price + 0.50,
+      source: 'GoldPrice.org'
+    };
+  } catch (error) {
+    console.warn('GoldPrice.org fetch failed:', error);
+    return null;
+  }
+};
+
+// Main fetch function with priority: GoldPrice.org > TradingView > Metals-API > Fallback
+export const fetchLiveGoldData = async (): Promise<GoldPriceData> => {
+  // Try GoldPrice.org first (free, reliable, no API key needed)
+  let data = await fetchFromGoldPriceOrg();
+
+  // Fallback to TradingView if GoldPrice.org fails
   if (!data) {
     data = await fetchFromTradingView();
   }
 
-  // Ultimate fallback with realistic price (Dec 2024: ~$4,197)
+  // Fallback to Metals-API if TradingView fails
+  if (!data) {
+    data = await fetchFromMetalsAPI();
+  }
+
+  // Ultimate fallback with realistic price (Dec 2024: ~$2,650)
   if (!data) {
     console.warn('All data sources failed, using fallback');
     return {
-      price: 4197.00,
-      open: 4207.00,
-      high: 4210.00,
-      low: 4175.00,
-      prevClose: 4207.87,
-      bid: 4196.50,
-      ask: 4197.50,
+      price: 2650.00,
+      open: 2645.00,
+      high: 2665.00,
+      low: 2640.00,
+      prevClose: 2647.50,
+      bid: 2649.50,
+      ask: 2650.50,
       source: 'Fallback'
     };
   }

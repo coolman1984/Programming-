@@ -104,36 +104,58 @@ const Dashboard: React.FC = () => {
             )}
          </div>
 
-         {/* SECTION 2: TECHNICAL OUTLOOK */}
-         <TechnicalOutlook data={technicalOutlook} loading={technicalOutlookLoading} />
-
-         {/* SECTION 3: DEEP ANALYSIS BUTTON */}
+         {/* SECTION 2: DEEP ANALYSIS BUTTON */}
          <div className="w-full">
             {isAnalyzing ? (
-               <div className="bg-[#111111] border border-slate-800/50 rounded-2xl p-8 flex flex-col items-center justify-center text-center relative overflow-hidden">
+               <div className="bg-[#111111] border border-slate-800/50 rounded-2xl p-12 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[320px]">
                   <div className="absolute inset-0 bg-[#0a0a0a] opacity-90"></div>
+
+                  {/* Multiple pulsing rings */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                     <div className="w-80 h-80 border border-amber-500/10 rounded-full animate-ping opacity-20"></div>
+                     <div className="w-96 h-96 border-2 border-amber-500/20 rounded-full animate-ping opacity-30"></div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                     <div className="w-72 h-72 border border-amber-500/10 rounded-full animate-pulse opacity-40"></div>
                   </div>
 
-                  <div className="relative z-10 flex flex-col items-center w-full max-w-sm">
-                     <div className="w-20 h-20 mb-6 relative flex items-center justify-center">
-                        <div className="absolute inset-0 bg-amber-500/20 blur-xl rounded-full animate-pulse"></div>
-                        <Loader2 size={56} className="text-amber-500 animate-spin" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                           <span className="text-lg font-bold text-white font-mono">{Math.round(progress)}%</span>
+                  <div className="relative z-10 flex flex-col items-center w-full max-w-lg">
+                     {/* Large circular progress indicator */}
+                     <div className="w-36 h-36 mb-8 relative flex items-center justify-center">
+                        <div className="absolute inset-0 bg-amber-500/20 blur-2xl rounded-full animate-pulse"></div>
+                        <div className="absolute inset-0 border-4 border-amber-500/30 rounded-full"></div>
+                        <div
+                           className="absolute inset-0 border-4 border-transparent border-t-amber-500 border-r-amber-400 rounded-full animate-spin"
+                           style={{ animationDuration: '1.5s' }}
+                        ></div>
+                        <div className="absolute inset-2 bg-[#0a0a0a] rounded-full flex items-center justify-center">
+                           <span className="text-4xl font-bold text-white font-mono">{Math.round(progress)}%</span>
                         </div>
                      </div>
 
-                     <h2 className="text-lg font-bold text-white mb-3 font-serif">{t('analysis.waiting.title')}</h2>
-                     <div className="flex items-center gap-2 text-slate-400 text-sm mb-6 bg-slate-900/50 px-4 py-2 rounded-full border border-slate-800">
-                        <ScanSearch size={16} className="text-amber-500 animate-pulse" />
-                        <span className="animate-pulse">Scanning Global Sources (16+)...</span>
+                     <h2 className="text-2xl font-bold text-white mb-4 font-serif">{t('analysis.waiting.title')}</h2>
+
+                     {/* Source names instead of (16+) */}
+                     <div className="flex items-center gap-2 text-slate-400 text-sm mb-4">
+                        <ScanSearch size={18} className="text-amber-500 animate-pulse" />
+                        <span className="animate-pulse">Scanning Global Sources...</span>
                      </div>
 
-                     <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
+                     {/* Scrolling source names */}
+                     <div className="flex flex-wrap justify-center gap-2 mb-6 max-w-md">
+                        {['Bloomberg', 'Reuters', 'Kitco', 'World Gold Council', 'LBMA', 'Fed Reserve'].map((source, i) => (
+                           <span
+                              key={source}
+                              className="text-xs px-3 py-1 bg-slate-800/50 border border-slate-700/50 rounded-full text-slate-400"
+                              style={{ animationDelay: `${i * 0.1}s` }}
+                           >
+                              {source}
+                           </span>
+                        ))}
+                     </div>
+
+                     <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
                         <div
-                           className="h-full bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600 transition-all duration-300 ease-out shadow-[0_0_15px_rgba(245,158,11,0.5)]"
+                           className="h-full bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600 transition-all duration-300 ease-out shadow-[0_0_20px_rgba(245,158,11,0.6)]"
                            style={{ width: `${progress}%` }}
                         ></div>
                      </div>
@@ -162,7 +184,10 @@ const Dashboard: React.FC = () => {
             )}
          </div>
 
-         {/* SECTION 3: MARKET DRIVERS / NEWS */}
+         {/* SECTION 3: TECHNICAL OUTLOOK */}
+         <TechnicalOutlook data={technicalOutlook} loading={technicalOutlookLoading} />
+
+         {/* SECTION 4: MARKET DRIVERS / NEWS */}
          <div>
             {loading && news.length === 0 ? (
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
