@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { DeepAnalysisData } from '../types';
-import { TrendingUp, TrendingDown, ExternalLink, Zap, ShieldCheck, Newspaper, BarChart3, Globe2, Activity, Info, CheckCircle2, Link2, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
+import { TrendingUp, TrendingDown, ExternalLink, Zap, ShieldCheck, Newspaper, BarChart3, Globe2, Activity, Info, CheckCircle2, Link2, BookOpen } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -29,28 +29,6 @@ const renderWithCitations = (text: string) => {
 const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
    const isGood = data.overall_sentiment_score >= 60;
    const { t } = useLanguage();
-   const [showSources, setShowSources] = useState(false);
-
-   // Get reliable homepage URL for a source (avoids broken article links)
-   const getSourceHomepage = (sourceName: string): string => {
-      const sourceMap: { [key: string]: string } = {
-         'Bloomberg': 'https://www.bloomberg.com/markets/commodities',
-         'Reuters': 'https://www.reuters.com/markets/commodities',
-         'Financial Times': 'https://www.ft.com/commodities',
-         'FT': 'https://www.ft.com/commodities',
-         'Investing.com': 'https://www.investing.com/commodities/gold',
-         'Kitco': 'https://www.kitco.com/',
-         'World Gold Council': 'https://www.gold.org/',
-         'WGC': 'https://www.gold.org/',
-      };
-      // Find matching source
-      for (const [key, url] of Object.entries(sourceMap)) {
-         if (sourceName.toLowerCase().includes(key.toLowerCase())) {
-            return url;
-         }
-      }
-      return '#'; // Fallback - no link
-   };
 
    // Group sources by impact
    const highImpactSources = data.sources.filter(s => s.impact_label === 'High Impact');
@@ -250,115 +228,80 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
             </div>
          </div>
 
-         {/* SOURCES - Collapsible */}
+         {/* SOURCES - Categorized by Impact */}
          <div className="bg-[#111111] border border-amber-500/20 rounded-2xl p-8">
-            <button
-               onClick={() => setShowSources(!showSources)}
-               className="w-full flex items-center justify-between mb-2 hover:opacity-80 transition-opacity"
-            >
+            <div className="flex items-center justify-between mb-6">
                <h3 className="text-white font-bold text-lg flex items-center gap-2">
                   <BookOpen size={20} className="text-amber-400" />
                   {t('analysis.sources_title')} ({data.sources.length})
                </h3>
-               <div className="flex items-center gap-3">
-                  <div className="flex gap-2">
-                     <span className="text-xs bg-rose-500/20 text-rose-400 px-2 py-1 rounded">{highImpactSources.length}</span>
-                     <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-1 rounded">{mediumImpactSources.length}</span>
-                     <span className="text-xs bg-slate-700/50 text-slate-400 px-2 py-1 rounded">{lowImpactSources.length}</span>
-                  </div>
-                  {showSources ? <ChevronUp size={20} className="text-slate-400" /> : <ChevronDown size={20} className="text-slate-400" />}
+               <div className="flex gap-2">
+                  <span className="text-xs bg-rose-500/20 text-rose-400 px-2 py-1 rounded">High: {highImpactSources.length}</span>
+                  <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-1 rounded">Medium: {mediumImpactSources.length}</span>
+                  <span className="text-xs bg-slate-700/50 text-slate-400 px-2 py-1 rounded">Low: {lowImpactSources.length}</span>
                </div>
-            </button>
+            </div>
 
-            <p className="text-slate-500 text-xs mb-4">
-               Click to {showSources ? 'hide' : 'view'} verified sources from Bloomberg, Reuters, Kitco, and more
-            </p>
+            {/* High Impact Sources */}
+            {highImpactSources.length > 0 && (
+               <div className="mb-6">
+                  <h4 className="text-sm font-bold text-rose-400 uppercase mb-3 flex items-center gap-2">
+                     <Zap size={14} /> High Impact Sources
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     {highImpactSources.map((source, idx) => (
+                        <a key={idx} href={source.url} target="_blank" rel="noopener noreferrer" className="bg-slate-900/30 border border-rose-500/30 rounded-xl p-4 hover:border-rose-500/60 transition-all block group">
+                           <div className="flex justify-between items-start mb-2">
+                              <h5 className="text-slate-200 font-bold text-sm line-clamp-1 group-hover:text-rose-400 transition-colors">{source.title}</h5>
+                              <ExternalLink size={14} className="text-slate-600 group-hover:text-rose-400 flex-shrink-0 ml-2" />
+                           </div>
+                           <p className="text-xs text-rose-400 mb-2 font-medium">{source.source}</p>
+                           {source.summary && <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed">{source.summary}</p>}
+                        </a>
+                     ))}
+                  </div>
+               </div>
+            )}
 
-            {showSources && (
-               <>
-                  {/* High Impact Sources */}
-                  {highImpactSources.length > 0 && (
-                     <div className="mb-6">
-                        <h4 className="text-sm font-bold text-rose-400 uppercase mb-3 flex items-center gap-2">
-                           <Zap size={14} /> High Impact Sources
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                           {highImpactSources.map((source, idx) => (
-                              <div key={idx} className="bg-slate-900/30 border border-rose-500/30 rounded-xl p-4 group">
-                                 <div className="flex justify-between items-start mb-2">
-                                    <h5 className="text-slate-200 font-bold text-sm line-clamp-1">{source.title}</h5>
-                                 </div>
-                                 <a
-                                    href={getSourceHomepage(source.source)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs text-rose-400 mb-2 font-medium hover:text-rose-300 transition-colors flex items-center gap-1"
-                                 >
-                                    {source.source}
-                                    <ExternalLink size={12} />
-                                 </a>
-                                 {source.summary && <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed mt-2">{source.summary}</p>}
-                              </div>
-                           ))}
-                        </div>
-                     </div>
-                  )}
+            {/* Medium Impact Sources */}
+            {mediumImpactSources.length > 0 && (
+               <div className="mb-6">
+                  <h4 className="text-sm font-bold text-amber-400 uppercase mb-3 flex items-center gap-2">
+                     <Activity size={14} /> Medium Impact Sources
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                     {mediumImpactSources.map((source, idx) => (
+                        <a key={idx} href={source.url} target="_blank" rel="noopener noreferrer" className="bg-slate-900/30 border border-amber-500/20 rounded-xl p-4 hover:border-amber-500/50 transition-all block group">
+                           <div className="flex justify-between items-start mb-2">
+                              <h5 className="text-slate-200 font-bold text-sm line-clamp-1 group-hover:text-amber-400 transition-colors">{source.title}</h5>
+                              <ExternalLink size={14} className="text-slate-600 group-hover:text-amber-400 flex-shrink-0 ml-2" />
+                           </div>
+                           <p className="text-xs text-amber-400 mb-2">{source.source}</p>
+                           {source.summary && <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed">{source.summary}</p>}
+                        </a>
+                     ))}
+                  </div>
+               </div>
+            )}
 
-                  {/* Medium Impact Sources */}
-                  {mediumImpactSources.length > 0 && (
-                     <div className="mb-6">
-                        <h4 className="text-sm font-bold text-amber-400 uppercase mb-3 flex items-center gap-2">
-                           <Activity size={14} /> Medium Impact Sources
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                           {mediumImpactSources.map((source, idx) => (
-                              <div key={idx} className="bg-slate-900/30 border border-amber-500/20 rounded-xl p-4 group">
-                                 <div className="flex justify-between items-start mb-2">
-                                    <h5 className="text-slate-200 font-bold text-sm line-clamp-1">{source.title}</h5>
-                                 </div>
-                                 <a
-                                    href={getSourceHomepage(source.source)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs text-amber-400 mb-2 hover:text-amber-300 transition-colors flex items-center gap-1"
-                                 >
-                                    {source.source}
-                                    <ExternalLink size={12} />
-                                 </a>
-                                 {source.summary && <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed mt-2">{source.summary}</p>}
-                              </div>
-                           ))}
-                        </div>
-                     </div>
-                  )}
-
-                  {/* Low Impact Sources */}
-                  {lowImpactSources.length > 0 && (
-                     <div>
-                        <h4 className="text-sm font-bold text-slate-500 uppercase mb-3 flex items-center gap-2">
-                           <Info size={14} /> Additional Sources
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                           {lowImpactSources.map((source, idx) => (
-                              <div key={idx} className="bg-slate-900/30 border border-amber-500/20 rounded-lg p-3 group">
-                                 <div className="flex justify-between items-start">
-                                    <h5 className="text-slate-300 font-medium text-xs line-clamp-1">{source.title}</h5>
-                                 </div>
-                                 <a
-                                    href={getSourceHomepage(source.source)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs text-slate-500 mt-1 hover:text-amber-400 transition-colors flex items-center gap-1"
-                                 >
-                                    {source.source}
-                                    <ExternalLink size={10} />
-                                 </a>
-                              </div>
-                           ))}
-                        </div>
-                     </div>
-                  )}
-               </>
+            {/* Low Impact Sources */}
+            {lowImpactSources.length > 0 && (
+               <div>
+                  <h4 className="text-sm font-bold text-slate-500 uppercase mb-3 flex items-center gap-2">
+                     <Info size={14} /> Additional Sources
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                     {lowImpactSources.map((source, idx) => (
+                        <a key={idx} href={source.url} target="_blank" rel="noopener noreferrer" className="bg-slate-900/30 border border-amber-500/20 rounded-lg p-3 hover:border-slate-600 transition-all block group">
+                           <div className="flex justify-between items-start">
+                              <h5 className="text-slate-300 font-medium text-xs line-clamp-1 group-hover:text-white transition-colors">{source.title}</h5>
+                              <ExternalLink size={12} className="text-slate-700 group-hover:text-slate-400 flex-shrink-0 ml-1" />
+                           </div>
+                           <p className="text-xs text-slate-500 mt-1">{source.source}</p>
+                        </a>
+                     ))}
+                  </div>
+               </div>
             )}
          </div>
 
