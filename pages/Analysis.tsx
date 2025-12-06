@@ -125,13 +125,13 @@ const Analysis: React.FC = () => {
       {/* Results */}
       {result && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="bg-[#0f172a] border border-slate-800 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+          <div className="bg-[#111111] border border-slate-800/50 rounded-2xl p-10 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5">
               <Sparkles size={120} />
             </div>
 
             <div className="relative z-10">
-              <div className="prose prose-invert prose-lg max-w-none text-slate-300 leading-relaxed">
+              <div className="article-content">
                 <ReactMarkdown>{result.text}</ReactMarkdown>
               </div>
             </div>

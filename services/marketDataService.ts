@@ -1,98 +1,216 @@
 import { AssetId, MarketData, NewsItem, PricePoint, Language, DeepAnalysisData } from "../types";
 import { ASSETS } from "../constants";
 
+interface GoldPriceData {
+  price: number;
+  open: number;
+  high: number;
+  low: number;
+  prevClose: number;
+  bid: number;
+  ask: number;
+  source: string;
+}
 
+// Get Metals-API key from environment
+const getMetalsApiKey = (): string | null => {
+  const key = (import.meta as any).env?.VITE_METALS_API_KEY;
+  if (!key || key === 'your_metals_api_key_here' || key.length < 10) {
+    return null;
+  }
+  return key;
+};
 
-// Helper to generate realistic price history with trends and volatility
-const generateHistory = (basePrice: number, days: number, volatility: number): PricePoint[] => {
+// PRIMARY: Fetch from Metals-API (Best free-tier overall)
+const fetchFromMetalsAPI = async (): Promise<GoldPriceData | null> => {
+  const apiKey = getMetalsApiKey();
+  if (!apiKey) {
+    console.warn('Metals-API key not configured, skipping...');
+    return null;
+  }
+
+  try {
+    // Metals-API latest endpoint - XAU is gold
+    const response = await fetch(`https://metals-api.com/api/latest?access_key=${apiKey}&base=USD&symbols=XAU`, {
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Metals-API responded with ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error?.info || 'Metals-API request failed');
+    }
+
+    // Metals-API returns rates relative to base currency
+    // XAU rate is how much 1 USD = X XAU, so price = 1 / rate
+    const xauRate = data.rates?.XAU;
+    if (!xauRate) {
+      throw new Error('XAU rate not found in Metals-API response');
+    }
+
+    const price = 1 / xauRate;
+
+    return {
+      price: Math.round(price * 100) / 100,
+      open: price,
+      high: price * 1.005, // Estimated from typical daily range
+      low: price * 0.995,
+      prevClose: price,
+      bid: price - 0.50,
+      ask: price + 0.50,
+      source: 'Metals-API'
+    };
+  } catch (error) {
+    console.warn('Metals-API fetch failed:', error);
+    return null;
+  }
+};
+
+// FALLBACK 1: TradingView Scanner API (no API key needed)
+const fetchFromTradingView = async (): Promise<GoldPriceData | null> => {
+  try {
+    // Use TVC:GOLD ticker - the main CFDs on Gold (US$/OZ) feed
+    const response = await fetch('https://scanner.tradingview.com/cfd/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        symbols: { tickers: ["TVC:GOLD"], query: { types: [] } },
+        columns: ["close", "open", "high", "low", "prev_close_price", "bid", "ask"]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`TradingView responded with ${response.status}`);
+    }
+
+    const data = await response.json();
+    const d = data.data?.[0]?.d;
+
+    if (!d || !d[0]) {
+      throw new Error('Price not found in TradingView response');
+    }
+
+    const price = d[0];
+    return {
+      price: price,
+      open: d[1] || price,
+      high: d[2] || price,
+      low: d[3] || price,
+      prevClose: d[4] || price,
+      bid: d[5] || price - 0.5,
+      ask: d[6] || price + 0.5,
+      source: 'TradingView'
+    };
+  } catch (error) {
+    console.warn('TradingView fetch failed:', error);
+    return null;
+  }
+};
+
+// Main fetch function with priority: Metals-API > TradingView > Fallback
+export const fetchLiveGoldData = async (): Promise<GoldPriceData> => {
+  // Try Metals-API first (best free-tier overall)
+  let data = await fetchFromMetalsAPI();
+
+  // Fallback to TradingView if Metals-API fails
+  if (!data) {
+    data = await fetchFromTradingView();
+  }
+
+  // Ultimate fallback with realistic price (Dec 2024: ~$4,197)
+  if (!data) {
+    console.warn('All data sources failed, using fallback');
+    return {
+      price: 4197.00,
+      open: 4207.00,
+      high: 4210.00,
+      low: 4175.00,
+      prevClose: 4207.87,
+      bid: 4196.50,
+      ask: 4197.50,
+      source: 'Fallback'
+    };
+  }
+
+  console.log(`Gold price fetched from ${data.source}: $${data.price.toFixed(2)}`);
+  return data;
+};
+
+// Generate realistic historical data based on current price
+// Uses seeded randomization for consistency (same seed = same chart)
+const generateRealisticHistory = (currentPrice: number, high: number, low: number, days: number): PricePoint[] => {
   const data: PricePoint[] = [];
   const now = Date.now();
   const msPerDay = 86400000;
 
-  let currentPrice = basePrice - (volatility * 2);
-  const trendStrength = 0.6;
+  // Use price-based seed for consistent randomization
+  const seed = Math.floor(currentPrice * 100) % 1000;
+  const seededRandom = (i: number) => {
+    const x = Math.sin(seed + i * 9999) * 10000;
+    return x - Math.floor(x);
+  };
+
+  // Typical gold daily volatility is about 0.5-1% of price (~$20-40 for $4000 gold)
+  const dailyVolatility = currentPrice * 0.005; // 0.5% daily volatility
+
+  // Gold has been trending up, so start lower and trend toward current
+  const startPrice = currentPrice - (dailyVolatility * days * 0.3); // Start ~lower
+  let price = startPrice;
 
   for (let i = days; i >= 0; i--) {
     const time = now - i * msPerDay;
-    const dailyTrend = trendStrength * (volatility / days);
-    const cyclicalComponent = Math.sin(i / 7) * (volatility * 0.3);
-    const randomWalk = (Math.random() - 0.5) * volatility * 0.8;
-    const momentumFactor = i < 5 ? (Math.random() * volatility * 0.5) : 0;
 
-    currentPrice += dailyTrend + cyclicalComponent * 0.1 + randomWalk + momentumFactor * 0.1;
-    currentPrice = Math.max(basePrice - volatility * 3, Math.min(basePrice + volatility * 3, currentPrice));
+    // Progress toward current price
+    const progress = (days - i) / days;
+    const targetPrice = startPrice + (currentPrice - startPrice) * progress;
+
+    // Add realistic daily noise (but seeded for consistency)
+    const dailyNoise = (seededRandom(i) - 0.5) * dailyVolatility * 2;
+
+    // Blend toward target with some noise
+    price = targetPrice + dailyNoise;
+
+    // Ensure last day matches current price exactly
+    if (i === 0) {
+      price = currentPrice;
+    }
 
     data.push({
       timestamp: time,
-      price: Math.round(currentPrice * 100) / 100,
+      price: Math.round(price * 100) / 100,
     });
   }
 
   return data;
 };
 
-// Calculate 24h metrics from history
-const calculate24hMetrics = (history: PricePoint[], currentPrice: number) => {
-  const last24h = history.slice(-2);
-  const previousPrice = last24h[0]?.price || currentPrice;
-  const change24h = currentPrice - previousPrice;
-  const change24hPercent = (change24h / previousPrice) * 100;
-
-  const recentPrices = history.slice(-7).map(p => p.price);
-  const high24h = Math.max(...recentPrices, currentPrice);
-  const low24h = Math.min(...recentPrices, currentPrice);
-
-  return { change24h, change24hPercent, high24h, low24h };
-};
-
-// Fetch live gold price from TradingView Scanner API (Unofficial but reliable "No API" method)
-export const fetchLiveGoldPrice = async (): Promise<number> => {
-  try {
-    const response = await fetch('https://scanner.tradingview.com/cfd/scan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        symbols: { tickers: ["FOREXCOM:XAUUSD"], query: { types: [] } },
-        columns: ["close"]
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`TradingView Scanner responded with status ${response.status}`);
-    }
-
-    const data = await response.json();
-    // Response format: { data: [ { s: "FOREXCOM:XAUUSD", d: [ 4224.55 ] } ] }
-    const price = data.data?.[0]?.d?.[0];
-
-    if (!price) {
-      throw new Error('Price not found in TradingView response');
-    }
-
-    return price;
-  } catch (error) {
-    console.warn('TradingView fetch failed, using fallback:', error);
-    // Return realistic fallback price for Dec 2025 context if fetch fails
-    return 4224.50;
-  }
-};
-
 // Data store
 let DATA_STORE: Record<AssetId, MarketData> | null = null;
 let lastFetchTime = 0;
-const CACHE_DURATION = 300000; // 5 minute cache to prevent frequent updates
+const CACHE_DURATION = 60000; // 1 minute cache for more real-time feel
 
 // Initialize data store with real API data
 const initializeDataStore = async (): Promise<Record<AssetId, MarketData>> => {
-  const currentPrice = await fetchLiveGoldPrice();
-  const history = generateHistory(currentPrice, 30, 25);
-  const metrics = calculate24hMetrics(history, currentPrice);
+  const liveData = await fetchLiveGoldData();
+  const history = generateRealisticHistory(liveData.price, liveData.high, liveData.low, 30);
+
+  const change24h = liveData.price - liveData.prevClose;
+  const change24hPercent = (change24h / liveData.prevClose) * 100;
 
   return {
     'gold-global': {
       assetId: 'gold-global',
-      currentPrice,
-      ...metrics,
+      currentPrice: liveData.price,
+      change24h: Math.round(change24h * 100) / 100,
+      change24hPercent: Math.round(change24hPercent * 100) / 100,
+      high24h: liveData.high,
+      low24h: liveData.low,
+      open: liveData.open,
+      prevClose: liveData.prevClose,
       lastUpdated: Date.now(),
       history,
     }

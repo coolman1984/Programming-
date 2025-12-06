@@ -1,15 +1,39 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { DeepAnalysisData, Asset, MarketData, AnalysisContextType, Language } from '../types';
+import { DeepAnalysisData, Asset, MarketData, AnalysisContextType, Language, TechnicalOutlookData } from '../types';
 import { getLatestDeepAnalysis } from '../services/marketDataService';
-import { generateDeepAssetAnalysis } from '../services/geminiService';
+import { generateDeepAssetAnalysis, generateTechnicalOutlook as generateTechnicalOutlookAI } from '../services/geminiService';
 
-const AnalysisContext = createContext<AnalysisContextType | undefined>(undefined);
+interface ExtendedAnalysisContextType extends AnalysisContextType {
+  technicalOutlook: TechnicalOutlookData | null;
+  technicalOutlookLoading: boolean;
+  generateTechnicalOutlook: (currentPrice: number) => Promise<void>;
+}
+
+const AnalysisContext = createContext<ExtendedAnalysisContextType | undefined>(undefined);
 
 export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [analysisResult, setAnalysisResult] = useState<DeepAnalysisData | null>(null);
+  const [technicalOutlook, setTechnicalOutlook] = useState<TechnicalOutlookData | null>(null);
+  const [technicalOutlookLoading, setTechnicalOutlookLoading] = useState(false);
+
+  // Generate Technical Outlook on dashboard first load (separate from Deep Analysis)
+  const generateTechnicalOutlook = async (currentPrice: number) => {
+    // Only generate if not already loaded and not currently generating
+    if (technicalOutlook || technicalOutlookLoading) return;
+
+    setTechnicalOutlookLoading(true);
+    try {
+      const data = await generateTechnicalOutlookAI(currentPrice);
+      setTechnicalOutlook(data);
+    } catch (error) {
+      console.error("Technical outlook generation failed:", error);
+    } finally {
+      setTechnicalOutlookLoading(false);
+    }
+  };
 
   const triggerAnalysis = async (asset: Asset, data: MarketData, lang: Language, query?: string) => {
     if (isAnalyzing) return;
@@ -20,7 +44,6 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     try {
       // Simulate "AI Thinking" visualization progress
-      // This saves API costs by not calling Gemini every time, but gives the user the Premium Experience
       let currentProgress = 5;
       const interval = setInterval(() => {
         currentProgress += Math.random() * 15;
@@ -42,6 +65,24 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
       clearInterval(interval);
       setProgress(100);
       setAnalysisResult(result);
+
+      // Update Technical Outlook with data from Deep Analysis
+      if (result) {
+        setTechnicalOutlook({
+          sentiment: result.outlook_analysis?.sentiment || (result.overall_sentiment_score > 60 ? 'bullish' : result.overall_sentiment_score < 40 ? 'bearish' : 'neutral'),
+          confidence: result.confidence_score || 80,
+          summary: result.technical_analysis || result.executive_summary,
+          strengthening_factors: result.outlook_analysis?.strengthening_count || result.factors_bullish?.length || 0,
+          weakening_factors: result.outlook_analysis?.weakening_count || result.factors_bearish?.length || 0,
+          key_drivers: result.drivers?.slice(0, 3).map(d => ({
+            name: d.name,
+            impact: d.impact_score,
+            sentiment: d.sentiment,
+            description: d.description
+          })) || [],
+          generated_at: result.generated_at
+        });
+      }
     } catch (error) {
       console.error("Analysis failed", error);
       setProgress(0);
@@ -57,7 +98,16 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   return (
-    <AnalysisContext.Provider value={{ isAnalyzing, progress, analysisResult, triggerAnalysis, clearAnalysis }}>
+    <AnalysisContext.Provider value={{
+      isAnalyzing,
+      progress,
+      analysisResult,
+      triggerAnalysis,
+      clearAnalysis,
+      technicalOutlook,
+      technicalOutlookLoading,
+      generateTechnicalOutlook
+    }}>
       {children}
     </AnalysisContext.Provider>
   );

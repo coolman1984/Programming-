@@ -253,51 +253,66 @@ SEARCH STRATEGY: COMPREHENSIVE COVERAGE
     Context: Global Gold Spot Price (XAU/USD), Federal Reserve, Geopolitics.
     
     === CRITICAL INSTRUCTIONS ===
-    Write a top-tier, publication-quality analytical response following this EXACT structure:
+    Write a top-tier, publication-quality analytical response using CLEAN MARKDOWN with proper headers.
+    DO NOT use numbered labels like "1.", "2.", "3." - use proper markdown ## headers instead.
     
-    **1. Executive Summary (3–6 sentences)**
-    Provide a high-level synthesis of the answer to the query.
+    === REQUIRED STRUCTURE (use these EXACT markdown headers) ===
     
-    **2. Context & Background**
+    Start directly with the Executive Summary paragraph (no header needed for first section - just start writing).
+    
+    ## Context & Background
     Establish the landscape and explain how the situation evolved.
     
-    **3. Core Analysis**
-    Break down into:
-    **A) Macroeconomic Drivers** - Interest rates, inflation, central bank policy, currency dynamics
-    **B) Geopolitical Forces** - Global tensions, trade policy, strategic competition
-    **C) Market Sentiment** - Risk appetite, capital flows, market positioning
-    **D) Fundamental Dynamics** - Supply-demand, production, structural constraints
+    ## Core Analysis
     
-    **4. Data Highlights**
-    Include 3-6 impactful data-driven insights with statistics.
+    ### A) Macroeconomic Drivers
+    Interest rates, inflation, central bank policy, currency dynamics.
     
-    **5. Scenario Forecasts**
-    • Base Case — Most likely path
-    • Bullish Case — Upside scenario
-    • Bearish Case — Downside scenario
+    ### B) Geopolitical Forces
+    Global tensions, trade policy, strategic competition.
     
-    **6. Risks & Unknowns**
+    ### C) Market Sentiment
+    Risk appetite, capital flows, market positioning.
+    
+    ### D) Fundamental Dynamics
+    Supply-demand, production, structural constraints.
+    
+    ## Data Highlights
+    Include 3-6 bullet points with impactful data-driven insights.
+    
+    ## Scenario Outlook
+    
+    **Base Case (Most Likely)**
+    Description with specific targets.
+    
+    **Bullish Case**
+    Upside scenario.
+    
+    **Bearish Case**
+    Downside scenario.
+    
+    ## Risks & Unknowns
     Identify uncertainties and potential shocks.
     
-    **7. Strategic Takeaways**
-    Actionable insights for investors and analysts.
+    ## Strategic Takeaways
+    Actionable insights for investors. Key indicators to monitor.
     
-    **8. Conclusion**
-    Strong closing insight with key indicators to monitor.
+    ## Conclusion
+    Strong closing insight.
     
     === STYLE REQUIREMENTS ===
     • analytical, clear, authoritative
-    • NO "Based on search results" or "According to approved sources"
-    • Start directly with facts
+    • NO numbered labels like "1.", "2.", "3." in content
+    • NO labels like "Executive Summary:", "Context:" in content
+    • use proper markdown headers (## for sections, ### for subsections)
     • every paragraph must advance understanding
     • use formal but accessible language
-    • make complexity readable and precise
     
     ${STRICT_SOURCE_LIST}
     
     ${searchStrategy}
     
-    STRICT CONSTRAINT: IGNORE all information from sources not in the approved list above.
+    CRITICAL: Output CLEAN markdown with ## headers. Do NOT include "1. Executive Summary" or similar numbered labels.
   `;
 
   try {
@@ -763,21 +778,29 @@ Date: ${today}
 === REQUIRED JSON OUTPUT ===
 === REQUIRED JSON OUTPUT ===
 {
-  "headline": "A killer, attention-grabbing headline (e.g., 'Gold Breaks Ranges as Shadow Banking Fears Ignite Safe-Haven Rush')",
+  "headline": "A killer, attention-grabbing headline following this format: '[Topic]: [Main Headline] as [Key Context]' (e.g., 'Powell's Dovish Turn: Gold Positions for a $2,600 Breakout as Markets Price a December Rate Cut')",
   
-  "executive_summary": "The 'Must-Read' centerpiece. A 500-word narrative masterpiece. Start with the single most critical driver involving a specific number or quote. Use varied sentence structure. BOLD key terms for skimmability. Weave a story that explains not just *that* price changed, but *why*. You MUST use specific numbers (yields, CPI %s, tonnage) and [Source: Name] citations throughout to prove your quality. End with a definitive market stance.",
+  "executive_summary": "WRITE A COMPREHENSIVE EXECUTIVE SUMMARY (5-8 sentences) that synthesizes the most critical findings. Start with the primary macro catalyst, explain why it matters NOW, connect the key forces (Fed, DXY, geopolitics), and preview the strategic implications. Use specific numbers and [Source: Name] citations. This is the 'Must-Read' paragraph that captures the entire analysis.",
   
-  "macro_analysis": "Deep dive into Fed policy, inflation, USD, and yields. Explain cause-and-effect. Example: 'With the 10Y Treasury yield hitting 4.5% [Source: CNBS], real rates are squeezing gold...'.",
+  "context_background": "CONTEXT & BACKGROUND section (2-3 paragraphs): Establish gold's historical role as a hedge against inflation, currency debasement, and systemic stress. Explain how the current situation evolved. Discuss the Federal Reserve's role and recent policy shifts. This provides the foundation for understanding why current conditions matter.",
   
-  "technical_analysis": "Professional chart analysis. Be specific: 'RSI at 72 signals overbought conditions [Source: TradingView]'. Discuss Key Levels, Moving Averages, and Volume profiles.",
+  "macro_analysis": "CORE ANALYSIS - A) MACROECONOMIC DRIVERS (2-3 paragraphs): Deep dive into rate expectations as the dominant macro catalyst. Explain how falling rates reduce yields on dollar-based assets, pushing capital toward gold. Discuss persistent inflation eroding purchasing power. Analyze DXY decline amplifying bullish momentum. Connect fiscal spending and deficit expansion to inflationary pressure. Use specific numbers and [Source: Name] citations.",
   
-  "geopolitical_analysis": "Analysis of the 'Fear Trade'. Specifics required: 'China's PBoC added 12 tons last month [Source: WGC]'. Explain how tensions translate to safe-haven bids.",
+  "geopolitical_analysis": "CORE ANALYSIS - B) GEOPOLITICAL FORCES (2-3 paragraphs): Analyze gold's response to uncertainty. Cover Eastern Europe/Middle East conflicts, rising tensions among major powers, fragmented trade relationships. Discuss supply-chain disruptions, sanctions, resource competition adding inflationary pressure. Explain how escalation triggers flight-to-safety flows. Use [Source: Name] citations.",
   
-  "sector_analysis": "Institutional money flows. ETF holdings (GLD, IAU) changes and Mining stock performance relative to spot.",
+  "sector_analysis": "CORE ANALYSIS - C) MARKET SENTIMENT & INVESTOR PSYCHOLOGY (2-3 paragraphs): Explain the shift in market psychology toward gold. Discuss expectations of softer dollar and lower real yields pulling investors back. Cover ETF inflows confirming broad-based demand. Analyze futures positioning suggesting traders preparing for breakout. Note rising trading volumes indicating deeper engagement. Use [Source: Name] citations.",
   
-  "consumer_analysis": "Physical market reality check. Premiums in Shanghai/Mumbai, mint sales, and jewelry demand trends.",
+  "consumer_analysis": "CORE ANALYSIS - D) FUNDAMENTAL / INDUSTRY DYNAMICS (2-3 paragraphs): Discuss supply-demand fundamentals supporting higher prices. Cover plateaued global production, few discoveries, rising extraction costs. Explain structural constraints (regulations, permitting, geopolitical risk in mining regions). On demand side, cover aggressive central bank buying, stable jewelry demand floor, expanding tech uses. Use [Source: Name] citations.",
   
-  "future_outlook": "6-12 month concrete scenarios. 'Bull Case: $3000 if Fed cuts in Q1. Bear Case: $2500 if CPI stays >3%.' Cite analyst targets [Source: Bank Name].",
+  "data_highlights": "DATA HIGHLIGHTS (bullet format): • DXY movement and gold's relative value • Real yield changes and opportunity cost • ETF holdings trends signaling investor conviction • Central bank purchase levels • Inflation relative to central bank targets. Each point should have specific numbers.",
+  
+  "future_outlook": "SCENARIO OUTLOOK with three concrete scenarios: BASE CASE (Most Likely) - specific price target and conditions; BULLISH CASE - upside scenario with triggers and higher target; BEARISH CASE - downside scenario with triggers and lower range. Each should include specific price levels and timeframes.",
+  
+  "risk_overview": "RISKS & UNKNOWNS (2 paragraphs): Identify variables that could weaken trajectory - sudden dollar rebound, hawkish Fed pivot, easing geopolitical tensions, mining technology improvements. Also note paradoxical risks like severe liquidity crisis causing initial gold drop despite strong fundamentals.",
+  
+  "strategic_takeaways": "STRATEGIC TAKEAWAYS (actionable insights): Gold remains a compelling hedge given monetary policy shift, lingering inflation, and structural geopolitical uncertainty. Recommend tracking: Federal Reserve communication, inflation and labor data, geopolitical flashpoints, ETF flows and futures positioning. These shape the next major move.",
+  
+  "market_outlook": "CONCLUSION (1 paragraph): Strong closing synthesis reinforcing the thesis. Summarize the favorable macro environment, the key catalysts, and gold's role as safe-haven. Emphasize the importance of staying attuned to policy shifts and global developments.",
   
   "metrics": [
     {"label": "DXY Dollar Index", "value": "actual value", "trend": "up/down/stable", "color": "green/red/blue/amber", "description": "Impact on gold"},
@@ -827,9 +850,6 @@ Date: ${today}
           {"title": "Factor Title", "description": "Description with [Source: Name]", "weight": 0-100, "confidence": 0-100, "source_url": "url", "source_name": "Source Name", "type": "weakening"}
       ]
   },
-
-  "risk_overview": "One sentence summary of key risks.",
-  "market_outlook": "One sentence summary of near-term expectation.",
   
   "factors_bullish": ["Factor 1", "Factor 2"],
   "factors_bearish": ["Factor 1", "Factor 2"]
@@ -842,7 +862,8 @@ CRITICAL RULES:
 4. **PRECISION**: No vague terms ("some experts"). Use names ("Goldman Sachs analysts").
 5. **STYLE**: Write like a human expert, not a robot. Use contractions (it's, won't) for flow if appropriate, but keep it professional.
 6. **COMPLIANCE**: Any information from sources outside the approved 6 domains must be ignored and not cited.
-7. Language: English
+7. **STRUCTURE**: Follow the exact article structure: Executive Summary → Context & Background → Core Analysis (4 pillars: Macro, Geopolitical, Sentiment, Fundamentals) → Data Highlights → Scenario Outlook → Risks → Strategic Takeaways → Conclusion.
+8. Language: English
 `;
 
   try {
@@ -928,73 +949,72 @@ export const generateMarketArticle = async (seedNews: NewsItem, language: Langua
     Market: Global Gold (XAU/USD), December 2025
     
     === CRITICAL INSTRUCTIONS ===
-    Write a top-tier, publication-quality analytical article following this EXACT structure:
+    Write a top-tier, publication-quality analytical article. The content field must be CLEAN MARKDOWN with proper headers.
     
-    **1. Title**
-    Create a strong, precise, authoritative title that communicates the core insight (must relate to: "${seedNews.title}").
+    === REQUIRED CONTENT STRUCTURE (use clean markdown headers, NO numbered labels) ===
     
-    **2. Executive Summary (3–6 sentences)**
-    Provide a high-level synthesis:
-    • the main thesis
-    • why the topic matters now
-    • the key forces driving trends
-    • what the reader will learn
+    Start directly with the Executive Summary paragraph (no header needed for this first section).
     
-    **3. Context & Background**
-    Establish the landscape. Explain the historical, economic, and structural context that shapes the topic.
-    Define any essential terms. Show how the situation evolved up to the present moment.
+    Then use these EXACT markdown headers:
     
-    **4. Core Analysis**
-    Break the analysis into four clear dimensions:
+    ## Context & Background
+    Establish the landscape. Explain the historical, economic, and structural context.
     
-    **A) Macroeconomic Drivers**
-    Discuss inflation, interest rates, growth, central-bank policy, fiscal policy, currency dynamics, and how they interact with the topic.
+    ## Core Analysis
     
-    **B) Geopolitical Forces**
-    Analyse global tensions, alliances, conflicts, trade policy, sanctions, energy dynamics, or strategic competition affecting gold.
+    ### A) Macroeconomic Drivers
+    Discuss inflation, interest rates, central-bank policy, currency dynamics.
     
-    **C) Market Sentiment & Investor Psychology**
-    Explain risk appetite, capital flows, speculation, behavioral cycles, liquidity trends, and market positioning.
+    ### B) Geopolitical Forces
+    Analyse global tensions, conflicts, trade policy, strategic competition.
     
-    **D) Fundamental / Industry-Specific Dynamics**
-    Discuss supply–demand, production, logistics, inventories, technology shifts, structural constraints, and the physical realities underlying gold markets.
+    ### C) Market Sentiment & Investor Psychology
+    Explain risk appetite, capital flows, speculation, market positioning.
     
-    **5. Data Highlights**
-    Include 3–6 impactful data-driven insights. Use statistics, historical patterns, or trend changes to reinforce the analysis.
+    ### D) Fundamental / Industry Dynamics
+    Discuss supply-demand, production, structural constraints.
     
-    **6. Scenario Forecasts (Short, Medium, Long Term)**
-    Provide three coherent scenarios:
-    • **Base Case** — Most likely path
-    • **Bullish Case** — Upside scenario
-    • **Bearish Case** — Downside scenario
-    Explain what conditions lead to each scenario.
+    ## Data Highlights
+    Include 3-6 bullet points with impactful data-driven insights.
     
-    **7. Risks & Unknowns**
-    Identify the uncertainties, shocks, or structural factors that could shift outcomes. Include both obvious and non-obvious risks.
+    ## Scenario Outlook
     
-    **8. Strategic Takeaways**
-    Deliver actionable insights for investors, analysts, or policymakers. Make complexity readable and precise.
+    **Base Case (Most Likely)**
+    Description with specific price target.
     
-    **9. Conclusion**
-    Deliver a strong closing insight. Reinforce the article's thesis, highlight what matters most going forward, and identify key indicators readers should monitor next.
+    **Bullish Case**
+    Upside scenario with triggers.
+    
+    **Bearish Case**
+    Downside scenario with triggers.
+    
+    ## Risks & Unknowns
+    Identify uncertainties and structural factors that could shift outcomes.
+    
+    ## Strategic Takeaways
+    Actionable insights for investors. What indicators to monitor.
+    
+    ## Conclusion
+    Strong closing insight reinforcing the thesis.
     
     === STYLE REQUIREMENTS ===
     • analytical, clear, authoritative
-    • no fluff, no generic statements ("Based on...", "According to...")
+    • NO numbered labels like "1.", "2.", "3." in the content
+    • NO labels like "Title:", "Executive Summary:" in the content
+    • use proper markdown headers (## for sections, ### for subsections)
     • every paragraph must advance understanding
-    • connect ideas logically and elegantly
     • use formal but accessible language
-    • avoid clichés and filler
-    • make complexity readable and precise
     
-    Output JSON format:
+    === OUTPUT JSON FORMAT ===
     {
-      "headline": "Your authoritative title here",
+      "headline": "Strong headline like: Powell's Dovish Turn: Gold Positions for $2,600 Breakout",
       "author": "${seedNews.source}",
       "readTime": "5 min read",
       "keyTakeaways": ["Takeaway 1", "Takeaway 2", "Takeaway 3"],
-      "content": "Full markdown article content following the 9-section structure above..."
+      "content": "Executive summary paragraph here...\\n\\n## Context & Background\\n\\nContent...\\n\\n## Core Analysis\\n\\n### A) Macroeconomic Drivers\\n\\nContent...\\n\\n### B) Geopolitical Forces\\n\\nContent..."
     }
+    
+    CRITICAL: The content field must be CLEAN markdown. Do NOT include "1. Title:" or "2. Executive Summary:" or similar labels. Just write the content with proper ## headers.
   `;
 
   try {
@@ -1023,3 +1043,75 @@ export const updateMarketArticle = async (originalArticle: MarketArticle, langua
 export const generateLiveDashboardInsights = async (): Promise<NewsItem[]> => {
   return [];
 };
+
+// Quick Technical Outlook generation for dashboard first load
+export const generateTechnicalOutlook = async (currentPrice: number): Promise<any> => {
+  const ai = getClient();
+  if (!ai) {
+    // Return default data if no API key
+    return {
+      sentiment: 'bullish',
+      confidence: 78,
+      summary: 'Gold prices remain supported by dovish Fed expectations and geopolitical uncertainty. Technical indicators suggest consolidation near current levels with upward bias.',
+      strengthening_factors: 4,
+      weakening_factors: 2,
+      key_drivers: [
+        { name: 'Fed Policy', impact: 85, sentiment: 'bullish', description: 'Dovish stance supports gold as opportunity cost decreases' },
+        { name: 'Dollar Weakness', impact: 72, sentiment: 'bullish', description: 'DXY decline makes gold cheaper for international buyers' },
+        { name: 'Geopolitical Risk', impact: 68, sentiment: 'bullish', description: 'Safe-haven demand elevated amid global tensions' }
+      ],
+      generated_at: new Date().toISOString()
+    };
+  }
+
+  const prompt = `
+    You are a gold market analyst. Provide a QUICK technical outlook for XAU/USD.
+    Current gold price: $${currentPrice.toFixed(2)} per ounce.
+    Today's date: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+    
+    Respond with JSON only:
+    {
+      "sentiment": "bullish" | "bearish" | "neutral",
+      "confidence": <number 0-100>,
+      "summary": "<2-3 sentence market outlook>",
+      "strengthening_factors": <count of bullish factors>,
+      "weakening_factors": <count of bearish factors>,
+      "key_drivers": [
+        { "name": "<driver name>", "impact": <0-100>, "sentiment": "bullish"|"bearish"|"neutral", "description": "<short description>" }
+      ]
+    }
+    
+    Include exactly 3 key drivers. Be concise but insightful.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
+      config: { responseMimeType: 'application/json' }
+    });
+    const data = cleanAndParseJSON(response.text || "{}");
+    if (data) {
+      data.generated_at = new Date().toISOString();
+      return data;
+    }
+  } catch (error) {
+    console.error("Technical outlook generation failed:", error);
+  }
+
+  // Fallback
+  return {
+    sentiment: 'neutral',
+    confidence: 75,
+    summary: 'Gold markets are consolidating as traders await key economic data releases.',
+    strengthening_factors: 3,
+    weakening_factors: 3,
+    key_drivers: [
+      { name: 'Fed Policy', impact: 80, sentiment: 'neutral', description: 'Market awaiting clarity on rate path' },
+      { name: 'Dollar Index', impact: 70, sentiment: 'neutral', description: 'DXY stabilizing near support levels' },
+      { name: 'Risk Sentiment', impact: 65, sentiment: 'neutral', description: 'Mixed signals from equity markets' }
+    ],
+    generated_at: new Date().toISOString()
+  };
+};
+

@@ -1,10 +1,13 @@
-/* Premium Gold Price Tracker - Design System */
-/* Using Reuters.com font stack: Arial for UI, Times New Roman for content */
+/* Premium Gold Price Tracker - Elegant Dark Theme */
+/* Matching the professional trading site aesthetic */
 
 /* Tailwind Base */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Import Google Fonts - Premium serif for headlines */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 /* CSS Variables for theming */
 :root {
@@ -19,29 +22,14 @@
   --gold-800: #785b0c;
   --gold-900: #63490e;
 
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --primary: 43 74% 49%;
-  --primary-foreground: 222.2 84% 4.9%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 43 74% 49%;
-  --accent-foreground: 222.2 84% 4.9%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 43 74% 49%;
-  --radius: 0.75rem;
+  --background: #0a0a0a;
+  --card-bg: #111111;
+  --border-color: #1a1a1a;
 }
 
 /* Base Styles */
 * {
-  border-color: hsl(var(--border));
+  border-color: var(--border-color);
 }
 
 html {
@@ -49,16 +37,23 @@ html {
 }
 
 body {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 18px;
-  line-height: 1.8;
-  background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #020617 100%);
-  background-attachment: fixed;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  background: var(--background);
   color: #e2e8f0;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Serif headlines */
+h1,
+h2,
+h3,
+.font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
 }
 
 /* Premium Scrollbar */
@@ -68,8 +63,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
-  border-radius: 3px;
+  background: #0a0a0a;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -81,46 +75,21 @@ body {
   background: linear-gradient(180deg, #facc15 0%, #D4AF37 100%);
 }
 
-/* Glassmorphism Utilities */
+/* Utility Classes */
 @layer utilities {
-  .glass {
-    background: rgba(15, 23, 42, 0.7);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
   .glass-card {
-    background: rgba(15, 23, 42, 0.6);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(212, 175, 55, 0.15);
-    box-shadow:
-      0 4px 30px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   }
 
-  .glass-gold {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 134, 11, 0.05) 100%);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    box-shadow:
-      0 8px 32px rgba(212, 175, 55, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  .glass-card:hover {
+    border-color: rgba(212, 175, 55, 0.3);
   }
 
-  .glass-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .glass-hover:hover {
-    background: rgba(15, 23, 42, 0.8);
-    border-color: rgba(212, 175, 55, 0.4);
-    box-shadow:
-      0 8px 40px rgba(212, 175, 55, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
+  /* Gold text color */
+  .text-gold {
+    color: #D4AF37;
   }
 
   /* Gold Gradient Text */
@@ -131,64 +100,27 @@ body {
     background-clip: text;
   }
 
-  /* Gold Border Gradient */
-  .border-gold-gradient {
-    border-image: linear-gradient(135deg, #D4AF37 0%, #facc15 50%, #B8860B 100%) 1;
-  }
-
   /* Gold Glow Effect */
   .glow-gold {
     box-shadow:
       0 0 20px rgba(212, 175, 55, 0.3),
-      0 0 40px rgba(212, 175, 55, 0.2),
-      0 0 60px rgba(212, 175, 55, 0.1);
-  }
-
-  .glow-gold-sm {
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+      0 0 40px rgba(212, 175, 55, 0.2);
   }
 
   /* Price Change Colors */
   .price-up {
-    color: #10b981;
-    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    color: #22c55e;
   }
 
   .price-down {
     color: #ef4444;
-    text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
-  }
-
-  /* Animated Background Gradient */
-  .bg-animate-gold {
-    background: linear-gradient(-45deg,
-        rgba(212, 175, 55, 0.1),
-        rgba(184, 134, 11, 0.05),
-        rgba(250, 204, 21, 0.1),
-        rgba(212, 175, 55, 0.05));
-    background-size: 400% 400%;
-    animation: gradient-shift 15s ease infinite;
-  }
-
-  @keyframes gradient-shift {
-    0% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
-    }
-
-    100% {
-      background-position: 0% 50%;
-    }
   }
 
   /* Shimmer Effect for Loading */
   .shimmer {
     background: linear-gradient(90deg,
         rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.05) 50%,
+        rgba(255, 255, 255, 0.03) 50%,
         rgba(255, 255, 255, 0) 100%);
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
@@ -204,55 +136,45 @@ body {
     }
   }
 
-  /* Pulse Animation for Live Indicator */
-  .pulse-gold {
-    animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  @keyframes pulse-gold {
-
-    0%,
-    100% {
-      opacity: 1;
-    }
-
-    50% {
-      opacity: 0.5;
-    }
-  }
-
-  /* Number Ticker Animation */
+  /* Number styling */
   .number-ticker {
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
   }
-}
 
-/* Recharts Custom Styling */
-.recharts-cartesian-grid-horizontal line,
-.recharts-cartesian-grid-vertical line {
-  stroke: rgba(148, 163, 184, 0.1);
-}
+  /* REALISTIC GOLD DUST BACKGROUND */
+  .bg-gold-dust {
+    background-color: #050505;
+    background-image:
+      radial-gradient(2px 2px at 20px 30px, #eee, rgba(0, 0, 0, 0)),
+      radial-gradient(2px 2px at 40px 70px, #fff, rgba(0, 0, 0, 0)),
+      radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0, 0, 0, 0)),
+      radial-gradient(2px 2px at 90px 40px, #fff, rgba(0, 0, 0, 0)),
+      radial-gradient(2px 2px at 130px 80px, #fff, rgba(0, 0, 0, 0)),
+      radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0, 0, 0, 0)),
+      radial-gradient(1.5px 1.5px at 190px 150px, #D4AF37, rgba(0, 0, 0, 0)),
+      /* Gold speck */
+      radial-gradient(2px 2px at 220px 20px, #ddd, rgba(0, 0, 0, 0)),
+      radial-gradient(2px 2px at 250px 50px, #fff, rgba(0, 0, 0, 0)),
+      radial-gradient(1.5px 1.5px at 280px 100px, #D4AF37, rgba(0, 0, 0, 0)),
+      /* Gold speck */
+      radial-gradient(2px 2px at 300px 140px, #eee, rgba(0, 0, 0, 0)),
+      radial-gradient(2px 2px at 340px 180px, #fff, rgba(0, 0, 0, 0));
+    background-repeat: repeat;
+    background-size: 400px 400px;
+    opacity: 0.6;
+    animation: dust-float 60s linear infinite;
+  }
 
-.recharts-tooltip-wrapper {
-  outline: none;
-}
+  @keyframes dust-float {
+    0% {
+      background-position: 0 0;
+    }
 
-.recharts-default-tooltip {
-  background: rgba(15, 23, 42, 0.95) !important;
-  border: 1px solid rgba(212, 175, 55, 0.3) !important;
-  border-radius: 12px !important;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
-}
-
-.recharts-tooltip-label {
-  color: #D4AF37 !important;
-  font-weight: 600;
-}
-
-.recharts-tooltip-item {
-  color: #f8fafc !important;
+    100% {
+      background-position: 400px 400px;
+    }
+  }
 }
 
 /* Selection Styling */
@@ -267,10 +189,10 @@ body {
   outline-offset: 2px;
 }
 
-/* Button Base */
+/* Button Styles */
 .btn-gold {
   background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-  color: #020617;
+  color: #0a0a0a;
   font-weight: 600;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
@@ -282,15 +204,94 @@ body {
   transform: translateY(-2px);
 }
 
-.btn-gold:active {
-  transform: translateY(0);
-}
-
 /* Card Hover Effects */
 .card-hover {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
 }
 
 .card-hover:hover {
-  transform: translateY(-4px) scale(1.01);
+  transform: translateY(-2px);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Recharts Custom Styling */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.05);
+}
+
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+/* ============================================
+   ARTICLE CONTENT STYLING
+   Matches the elegant reference design
+   ============================================ */
+
+.article-content {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 17px;
+  line-height: 2;
+  color: #cbd5e1;
+}
+
+.article-content h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 4rem;
+  margin-bottom: 2rem;
+}
+
+.article-content h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 8px;
+  text-decoration-thickness: 1px;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.article-content p {
+  margin-bottom: 1.5rem;
+  line-height: 2;
+}
+
+.article-content strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.article-content ul {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.article-content li {
+  margin-bottom: 0.75rem;
+  line-height: 1.8;
+}
+
+.article-content a {
+  color: #D4AF37;
+  text-decoration: none;
+}
+
+.article-content a:hover {
+  text-decoration: underline;
+}
+
+.article-content blockquote {
+  border-left: 2px solid #D4AF37;
+  background: #111111;
+  padding: 1rem 1.5rem;
+  border-radius: 0 0.75rem 0.75rem 0;
+  margin: 2rem 0;
+  color: #94a3b8;
+  font-style: normal;
 }

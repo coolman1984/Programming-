@@ -6,6 +6,8 @@ import { Gem, CheckCircle2, X, Menu, Bell, Settings, Search } from 'lucide-react
 import { useAnalysis } from '../context/AnalysisContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Language } from '../types';
+import { refreshMarketData } from '../services/marketDataService';
+import { GoldPyramidLogo } from './Logo';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -35,14 +37,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   }, [analysisResult, location.pathname]);
 
+  // Refresh market data on navigation (silent background refresh)
+  useEffect(() => {
+    refreshMarketData().catch(console.warn);
+  }, [location.pathname]);
 
 
   return (
-    <div dir={dir} className="min-h-screen bg-[#020617] text-slate-100 selection:bg-amber-500/30 pb-24 md:pb-20">
-      {/* Premium Background Effects */}
+    <div dir={dir} className="min-h-screen bg-[#0a0a0a] text-slate-100 selection:bg-amber-500/30 pb-24 md:pb-20">
+      {/* Premium Gold Dust Background Effects */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-amber-600/5 rounded-full blur-[120px]" />
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-yellow-500/3 rounded-full blur-[120px]" />
+        <div className="absolute top-1/2 right-1/3 w-[300px] h-[300px] bg-amber-400/5 rounded-full blur-[100px]" />
       </div>
 
       {/* Navbar */}
@@ -51,7 +58,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? 'glass border-b border-slate-700/50'
+          ? 'bg-[#0a0a0a]/95 backdrop-blur-md border-b border-slate-800/50'
           : 'bg-transparent'
           }`}
       >
@@ -59,13 +66,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex h-16 md:h-20 items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <motion.div
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg glow-gold-sm"
-              >
-                <span className="text-xl">🥇</span>
-              </motion.div>
+              <div className="w-12 h-12 flex items-center justify-center">
+                <GoldPyramidLogo />
+              </div>
               <div>
                 <h1 className="text-xl font-bold">
                   <span className="text-white">Gold</span>{' '}
@@ -83,24 +86,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-              {/* Search */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="hidden sm:flex p-2.5 rounded-xl glass-hover text-slate-400 hover:text-white"
-              >
-                <Search size={18} />
-              </motion.button>
-
-              {/* Notifications */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="hidden sm:flex p-2.5 rounded-xl glass-hover text-slate-400 hover:text-white relative"
-              >
-                <Bell size={18} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-500 rounded-full" />
-              </motion.button>
 
 
 

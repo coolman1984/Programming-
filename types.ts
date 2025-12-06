@@ -22,6 +22,8 @@ export interface MarketData {
   change24hPercent: number;
   high24h: number;
   low24h: number;
+  open: number;
+  prevClose: number;
   lastUpdated: number;
   history: PricePoint[];
 }
@@ -184,3 +186,19 @@ export interface AIPrediction {
   confidenceScore: number;
   reasoning: string;
 }
+
+export interface TechnicalOutlookData {
+  sentiment: 'bullish' | 'bearish' | 'neutral';
+  confidence: number;
+  summary: string;
+  strengthening_factors: number;
+  weakening_factors: number;
+  key_drivers: {
+    name: string;
+    impact: number;
+    sentiment: 'bullish' | 'bearish' | 'neutral';
+    description: string;
+  }[];
+  generated_at: string;
+}
+

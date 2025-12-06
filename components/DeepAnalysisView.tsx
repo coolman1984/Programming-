@@ -53,7 +53,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
          {/* FINANCIAL METRICS CARDS */}
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {data.metrics && data.metrics.map((metric, idx) => (
-               <div key={idx} className="bg-[#0f172a] border border-slate-800 rounded-2xl p-6 flex flex-col items-center text-center shadow-lg hover:border-amber-500/30 transition-colors group relative">
+               <div key={idx} className="bg-[#111111] border border-slate-800 rounded-2xl p-6 flex flex-col items-center text-center shadow-lg hover:border-amber-500/30 transition-colors group relative">
                   <div className="flex items-center gap-2 mb-3">
                      <span className="text-slate-400 text-sm font-bold uppercase tracking-wider">{metric.label}</span>
                      <div className="text-slate-600 group-hover:text-amber-400 transition-colors cursor-help" title={metric.description}>
@@ -62,8 +62,8 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                   </div>
 
                   <span className={`text-4xl font-bold font-mono mb-3 ${metric.color === 'green' ? 'text-emerald-400' :
-                        metric.color === 'red' ? 'text-rose-400' :
-                           metric.color === 'blue' ? 'text-blue-400' : 'text-amber-400'
+                     metric.color === 'red' ? 'text-rose-400' :
+                        metric.color === 'blue' ? 'text-blue-400' : 'text-amber-400'
                      }`}>
                      {metric.value}
                   </span>
@@ -84,7 +84,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
          </div>
 
          {/* EXECUTIVE SUMMARY - With inline citation highlighting */}
-         <div className="bg-[#0f172a] border border-slate-800 rounded-2xl p-10 relative overflow-hidden shadow-2xl">
+         <div className="bg-[#111111] border border-slate-800 rounded-2xl p-10 relative overflow-hidden shadow-2xl">
             <div className={`absolute top-0 right-0 w-96 h-96 blur-[120px] rounded-full opacity-10 pointer-events-none ${isGood ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
             <div className="relative z-10">
                <div className="flex items-center gap-3 mb-6">
@@ -120,7 +120,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
 
          {/* DETAILED SECTIONS */}
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-[#0f172a] border border-slate-800 rounded-2xl p-8">
+            <div className="bg-[#111111] border border-slate-800 rounded-2xl p-8">
                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-slate-800 pb-4 font-serif">
                   <Activity size={24} className="text-blue-400" /> {t('analysis.global_macro')}
                </h3>
@@ -139,7 +139,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                </div>
             </div>
 
-            <div className="bg-[#0f172a] border border-slate-800 rounded-2xl p-8">
+            <div className="bg-[#111111] border border-slate-800 rounded-2xl p-8">
                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-slate-800 pb-4 font-serif">
                   <Globe2 size={24} className="text-amber-400" /> {t('analysis.geopolitical')}
                </h3>
@@ -158,7 +158,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                </div>
             </div>
 
-            <div className="lg:col-span-2 bg-[#0f172a] border border-slate-800 rounded-2xl p-8">
+            <div className="lg:col-span-2 bg-[#111111] border border-slate-800 rounded-2xl p-8">
                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-slate-800 pb-4 font-serif">
                   <BarChart3 size={24} className="text-purple-400" /> {t('analysis.technical')}
                </h3>
@@ -192,7 +192,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
 
          {/* DRIVERS & BALANCE */}
          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-[#0f172a] border border-slate-800 rounded-2xl p-8">
+            <div className="bg-[#111111] border border-slate-800 rounded-2xl p-8">
                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2"><Zap size={20} className="text-amber-400" /> {t('analysis.drivers')}</h3>
                <div className="space-y-5">
                   {data.drivers.map((driver, idx) => (
@@ -200,8 +200,8 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                         <div className="flex justify-between items-center mb-3">
                            <span className="font-bold text-slate-200 text-base">{driver.name}</span>
                            <span className={`text-xs px-2.5 py-1 rounded font-bold ${driver.sentiment === 'bullish' ? 'bg-emerald-500/20 text-emerald-400' :
-                                 driver.sentiment === 'bearish' ? 'bg-rose-500/20 text-rose-400' :
-                                    'bg-slate-800 text-slate-400'
+                              driver.sentiment === 'bearish' ? 'bg-rose-500/20 text-rose-400' :
+                                 'bg-slate-800 text-slate-400'
                               }`}>
                               {driver.impact_score}/100
                            </span>
@@ -212,7 +212,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
                </div>
             </div>
 
-            <div className="bg-[#0f172a] border border-slate-800 rounded-2xl p-8">
+            <div className="bg-[#111111] border border-slate-800 rounded-2xl p-8">
                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2"><ShieldCheck size={20} className="text-blue-400" /> {t('analysis.bull_bear')}</h3>
                <div className="space-y-6">
                   <div>
@@ -229,7 +229,7 @@ const DeepAnalysisView: React.FC<DeepAnalysisViewProps> = ({ data }) => {
          </div>
 
          {/* SOURCES - Categorized by Impact */}
-         <div className="bg-[#0f172a] border border-slate-800 rounded-2xl p-8">
+         <div className="bg-[#111111] border border-slate-800 rounded-2xl p-8">
             <div className="flex items-center justify-between mb-6">
                <h3 className="text-white font-bold text-lg flex items-center gap-2">
                   <BookOpen size={20} className="text-amber-400" />
