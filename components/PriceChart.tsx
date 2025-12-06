@@ -37,91 +37,91 @@ const PriceChart: React.FC<PriceChartProps> = ({ data }) => {
       </div>
 
       {/* Header */}
-      <div className="text-center mb-6 relative z-10">
-        <p className="text-amber-500 text-sm font-bold tracking-[0.3em] uppercase mb-6">
+      <div className="text-center mb-5 relative z-10">
+        <p className="text-amber-500 text-xs font-bold tracking-[0.25em] uppercase mb-5">
           LIVE SPOT PRICE (XAU/USD)
         </p>
 
         {/* Big Price Display */}
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <span className="text-6xl md:text-7xl font-bold text-white font-mono tracking-tight">
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <span className="text-5xl md:text-6xl font-bold text-white font-mono tracking-tight">
             ${data.currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
 
         {/* Change Badge */}
-        <div className="flex justify-center mb-4">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border ${isPositive
+        <div className="flex justify-center mb-3">
+          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${isPositive
             ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
             : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
             }`}>
-            {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-            <span className="font-bold font-mono">
+            {isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+            <span className="font-semibold font-mono text-sm">
               {isPositive ? '+' : ''}{data.change24h.toFixed(2)} ({isPositive ? '+' : ''}{data.change24hPercent.toFixed(2)}%)
             </span>
           </div>
         </div>
 
         {/* Last Updated */}
-        <p className="text-slate-500 text-sm">
+        <p className="text-slate-500 text-xs">
           Last updated: {lastUpdated}
         </p>
       </div>
 
       {/* Metrics Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative z-10 mt-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 relative z-10 mt-6">
         {/* Day High */}
-        <div className="bg-[#111111] border border-slate-800 rounded-xl p-5 relative">
-          <div className="flex items-center justify-between mb-4">
-            <div className="bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
-              <ArrowUp size={18} className="text-amber-500" />
+        <div className="bg-[#111111] border border-slate-800 rounded-lg p-4 relative">
+          <div className="flex items-center justify-between mb-3">
+            <div className="bg-amber-500/10 p-1.5 rounded-lg border border-amber-500/20">
+              <ArrowUp size={14} className="text-amber-500" />
             </div>
-            <span className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
-              <TrendingUp size={10} /> High
+            <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+              <TrendingUp size={8} />High
             </span>
           </div>
-          <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">DAY HIGH</p>
-          <p className="text-white text-2xl font-bold font-mono">${data.high24h.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
-          <p className="text-slate-500 text-xs mt-1">Today's Peak</p>
+          <p className="text-slate-400 text-[10px] font-medium uppercase tracking-wider mb-0.5">DAY HIGH</p>
+          <p className="text-white text-xl font-bold font-mono">${data.high24h.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+          <p className="text-slate-500 text-[10px] mt-0.5">Today's Peak</p>
         </div>
 
         {/* Day Low */}
-        <div className="bg-[#111111] border border-slate-800 rounded-xl p-5 relative">
-          <div className="flex items-center justify-between mb-4">
-            <div className="bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
-              <ArrowDown size={18} className="text-amber-500" />
+        <div className="bg-[#111111] border border-slate-800 rounded-lg p-4 relative">
+          <div className="flex items-center justify-between mb-3">
+            <div className="bg-amber-500/10 p-1.5 rounded-lg border border-amber-500/20">
+              <ArrowDown size={14} className="text-amber-500" />
             </div>
-            <span className="bg-rose-500/20 text-rose-400 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
-              <TrendingDown size={10} /> Low
+            <span className="bg-rose-500/20 text-rose-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+              <TrendingDown size={8} />Low
             </span>
           </div>
-          <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">DAY LOW</p>
-          <p className="text-white text-2xl font-bold font-mono">${data.low24h.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
-          <p className="text-slate-500 text-xs mt-1">Today's Floor</p>
+          <p className="text-slate-400 text-[10px] font-medium uppercase tracking-wider mb-0.5">DAY LOW</p>
+          <p className="text-white text-xl font-bold font-mono">${data.low24h.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+          <p className="text-slate-500 text-[10px] mt-0.5">Today's Floor</p>
         </div>
 
         {/* 52W High */}
-        <div className="bg-[#111111] border border-slate-800 rounded-xl p-5 relative">
-          <div className="flex items-center justify-between mb-4">
-            <div className="bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
-              <Trophy size={18} className="text-amber-500" />
+        <div className="bg-[#111111] border border-slate-800 rounded-lg p-4 relative">
+          <div className="flex items-center justify-between mb-3">
+            <div className="bg-amber-500/10 p-1.5 rounded-lg border border-amber-500/20">
+              <Trophy size={14} className="text-amber-500" />
             </div>
           </div>
-          <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">52W HIGH</p>
-          <p className="text-white text-2xl font-bold font-mono">${yearlyHigh.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
-          <p className="text-slate-500 text-xs mt-1">Yearly Record</p>
+          <p className="text-slate-400 text-[10px] font-medium uppercase tracking-wider mb-0.5">52W HIGH</p>
+          <p className="text-white text-xl font-bold font-mono">${yearlyHigh.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+          <p className="text-slate-500 text-[10px] mt-0.5">Yearly Record</p>
         </div>
 
         {/* Bid/Ask */}
-        <div className="bg-[#111111] border border-slate-800 rounded-xl p-5 relative">
-          <div className="flex items-center justify-between mb-4">
-            <div className="bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
-              <Coins size={18} className="text-amber-500" />
+        <div className="bg-[#111111] border border-slate-800 rounded-lg p-4 relative">
+          <div className="flex items-center justify-between mb-3">
+            <div className="bg-amber-500/10 p-1.5 rounded-lg border border-amber-500/20">
+              <Coins size={14} className="text-amber-500" />
             </div>
           </div>
-          <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">BID / ASK</p>
-          <p className="text-white text-xl font-bold font-mono">${bid.toFixed(1)} / ${ask.toFixed(1)}</p>
-          <p className="text-slate-500 text-xs mt-1">Spread: ${spread.toFixed(2)}</p>
+          <p className="text-slate-400 text-[10px] font-medium uppercase tracking-wider mb-0.5">BID / ASK</p>
+          <p className="text-white text-lg font-bold font-mono">${bid.toFixed(1)} / ${ask.toFixed(1)}</p>
+          <p className="text-slate-500 text-[10px] mt-0.5">Spread: ${spread.toFixed(2)}</p>
         </div>
       </div>
     </div>

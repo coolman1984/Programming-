@@ -819,7 +819,9 @@ Date: ${today}
   ],
   
   "sources": [
+    // IMPORTANT: Include AT LEAST 12-15 sources from the 6 approved domains. Distribute across Bloomberg, Reuters, Financial Times, Investing.com, Kitco, and World Gold Council.
     {"title": "Article Title", "source": "Publication Name", "url": "https://...", "summary": "Key insight from this source", "relevance_score": 0.0-1.0, "sentiment": "positive/negative/neutral", "impact_label": "High Impact/Medium Impact/Low Impact"}
+    // ... repeat for at least 12 sources total
   ],
 
   "outlook_analysis": {
@@ -866,6 +868,7 @@ CRITICAL RULES:
 6. **COMPLIANCE**: Any information from sources outside the approved 6 domains must be ignored and not cited.
 7. **STRUCTURE**: Follow the exact article structure: Executive Summary → Context & Background → Core Analysis (4 pillars: Macro, Geopolitical, Sentiment, Fundamentals) → Data Highlights → Scenario Outlook → Risks → Strategic Takeaways → Conclusion.
 8. Language: English
+9. **MINIMUM SOURCES**: You MUST include AT LEAST 12-15 different sources in the "sources" array. Distribute them across all 6 approved domains (Bloomberg, Reuters, FT, Investing.com, Kitco, World Gold Council). Each source should have a unique URL and title. This is CRITICAL for demonstrating comprehensive research.
 `;
 
   try {
