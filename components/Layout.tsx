@@ -1,15 +1,13 @@
 
-
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, Settings, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { refreshMarketData } from '../services/marketDataService';
 import { GoldPyramidLogo } from './Logo';
 import CommandPalette from './CommandPalette';
 import Breadcrumbs from './Breadcrumbs';
-import FloatingActionButton from './FloatingActionButton';
 import PageTransition from './PageTransition';
 
 interface LayoutProps {
@@ -76,22 +74,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="hidden md:flex items-center gap-1">
               <NavLink href="/" active={location.pathname === '/'}>Dashboard</NavLink>
               <NavLink href="/analysis" active={location.pathname === '/analysis'}>Analysis</NavLink>
-              <div className="h-4 w-[1px] bg-slate-800 mx-2" />
-              <button
-                onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
-                className="text-xs text-slate-500 hover:text-amber-400 bg-slate-900/50 hover:bg-slate-800 border border-slate-800 px-2 py-1.5 rounded-lg flex items-center gap-2 transition-all"
-              >
-                <span>Search</span>
-                <kbd className="hidden sm:inline-block font-mono bg-slate-800 border-slate-700 border rounded px-1 text-[10px]">⌘K</kbd>
-              </button>
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-2">
               {/* Live Indicator */}
-              <div className="hidden lg:flex px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl items-center gap-2 pulse-live">
+              <div className="hidden lg:flex px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl items-center gap-2">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
                 <span className="text-xs font-bold text-emerald-400 tracking-wide uppercase">{t('nav.live')}</span>
@@ -136,8 +125,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </PageTransition>
       </main>
-
-      <FloatingActionButton />
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-slate-800/50 py-8 mt-12 bg-[#0a0a0a]/50 backdrop-blur-sm">
