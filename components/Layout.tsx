@@ -46,8 +46,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? 'bg-[#0a0a0a]/95 backdrop-blur-md border-b border-slate-800/50'
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
+          ? 'bg-[#0a0a0a] backdrop-blur-md border-b border-slate-800/50'
           : 'bg-transparent'
           }`}
       >
@@ -107,11 +107,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden glass border-t border-slate-700/50"
+              className="md:hidden bg-[#0a0a0a] border-t border-slate-700/50"
             >
               <div className="px-4 py-4 space-y-2">
                 <MobileNavLink href="/" onClick={() => setIsMobileMenuOpen(false)}>Dashboard</MobileNavLink>
-                <MobileNavLink href="/report" onClick={() => setIsMobileMenuOpen(false)}>Analysis Report</MobileNavLink>
+                <MobileNavLink href="/analysis" onClick={() => setIsMobileMenuOpen(false)}>Analysis</MobileNavLink>
               </div>
             </motion.div>
           )}
@@ -119,7 +119,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </motion.nav>
 
       {/* Main Content */}
-      <main className="relative max-w-[1400px] mx-auto px-4 md:px-6 pt-24 md:pt-28 pb-10">
+      <main className="relative max-w-[1400px] mx-auto px-4 md:px-6 pt-32 md:pt-28 pb-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
