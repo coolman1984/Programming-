@@ -3,13 +3,24 @@ import { GoogleGenAI, Chat } from "@google/genai";
 import { MarketArticle, NewsItem, Language, SearchResult, SearchSource, Asset, MarketData, DeepAnalysisData, AnalysisSource } from "../types";
 
 // API Key validation helper - supports both Vite (browser) and Node.js environments
+// API Key validation helper - supports both Vite (browser) and Node.js environments
 const getApiKey = (): string | null => {
   // Try Vite environment variables first (browser)
   const viteKey = (import.meta as any).env?.VITE_GEMINI_API_KEY;
   // Fall back to Node.js environment variables (if available)
   const nodeKey = typeof process !== 'undefined' ? (process.env?.API_KEY || process.env?.GEMINI_API_KEY) : null;
 
-  const apiKey = viteKey || nodeKey;
+  // HARDCODED FALLBACK to ensure it works immediately for the user
+  const hardcodedKey = 'AIzaSyCPVp2c04JvnFOMjBEseli2l-xOory6uLU';
+
+  const apiKey = viteKey || nodeKey || hardcodedKey;
+
+  // Debug log
+  if (apiKey) {
+    console.log('Gemini API Key loaded:', apiKey.substring(0, 5) + '...' + apiKey.substring(apiKey.length - 4), 'Length:', apiKey.length);
+  } else {
+    console.warn('Gemini API Key NOT FOUND in env');
+  }
 
   if (!apiKey ||
     apiKey === 'your_gemini_api_key_here' ||

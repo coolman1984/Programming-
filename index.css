@@ -1,13 +1,13 @@
 /* Premium Gold Price Tracker - Elegant Dark Theme */
 /* Matching the professional trading site aesthetic */
 
+/* Import Google Fonts - Premium serif for headlines (MUST be before @tailwind) */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
 /* Tailwind Base */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import Google Fonts - Premium serif for headlines */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 /* CSS Variables - Dark Theme Only */
 :root {

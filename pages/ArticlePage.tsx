@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, User, Share2, Bookmark } from 'lucide-react';
+import { ArrowLeft, Clock, User, Share2, Bookmark, AlertTriangle, RefreshCcw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { updateMarketArticle, generateMarketArticle } from '../services/geminiService';
 import { NewsItem, MarketArticle } from '../types';
@@ -16,6 +16,27 @@ const ArticlePage: React.FC = () => {
    const [isUpdating, setIsUpdating] = useState(false);
    const [showUpdateBanner, setShowUpdateBanner] = useState(false);
    const [isLoading, setIsLoading] = useState(false);
+   const [error, setError] = useState<string | null>(null);
+
+   const loadArticle = async () => {
+      if (!seedNews) return;
+
+      setIsLoading(true);
+      setError(null);
+      try {
+         const generated = await generateMarketArticle(seedNews, language);
+         if (generated) {
+            setArticle(generated);
+         } else {
+            setError("Failed to generate analysis. Please check your API key or connection.");
+         }
+      } catch (e) {
+         console.error(e);
+         setError("An unexpected error occurred while generating the analysis.");
+      } finally {
+         setIsLoading(false);
+      }
+   };
 
    useEffect(() => {
       if (!seedNews) {
@@ -23,18 +44,7 @@ const ArticlePage: React.FC = () => {
          return;
       }
 
-      if (!article && seedNews) {
-         const loadArticle = async () => {
-            setIsLoading(true);
-            try {
-               const generated = await generateMarketArticle(seedNews, language);
-               setArticle(generated);
-            } catch (e) {
-               console.error(e);
-            } finally {
-               setIsLoading(false);
-            }
-         };
+      if (!article) {
          loadArticle();
       }
 
@@ -58,9 +68,9 @@ const ArticlePage: React.FC = () => {
    if (!seedNews) return null;
 
    return (
-      <div className="max-w-4xl mx-auto pb-20">
+      <div className="max-w-4xl mx-auto pb-20 px-4 md:px-0">
          {/* Back Button */}
-         <div className="flex justify-between items-center mb-10">
+         <div className="flex justify-between items-center mb-10 pt-6">
             <button
                onClick={() => navigate('/')}
                className="flex items-center gap-3 text-slate-400 hover:text-amber-500 transition-colors text-sm group"
@@ -71,6 +81,24 @@ const ArticlePage: React.FC = () => {
                <span className="font-medium">{t('article.back')}</span>
             </button>
          </div>
+
+         {/* Error State */}
+         {error && (
+            <div className="min-h-[40vh] flex flex-col items-center justify-center text-center animate-in fade-in">
+               <div className="bg-red-500/10 p-4 rounded-full mb-4 border border-red-500/20">
+                  <AlertTriangle size={32} className="text-red-500" />
+               </div>
+               <h3 className="text-xl font-bold text-white mb-2">Analysis Generation Failed</h3>
+               <p className="text-slate-400 mb-6 max-w-md">{error}</p>
+               <button
+                  onClick={loadArticle}
+                  className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl flex items-center gap-2 transition-colors"
+               >
+                  <RefreshCcw size={18} />
+                  Retry Analysis
+               </button>
+            </div>
+         )}
 
          {/* Full Page Loading State */}
          {isLoading && (
@@ -97,7 +125,7 @@ const ArticlePage: React.FC = () => {
             </div>
          )}
 
-         {article && !isLoading ? (
+         {article && !isLoading && !error ? (
             <article className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                {/* Header */}
                <header className="mb-12">
@@ -151,7 +179,7 @@ const ArticlePage: React.FC = () => {
                )}
 
                {/* Article Content */}
-               <div className="article-content">
+               <div className="article-content prose prose-invert prose-amber max-w-none">
                   <ReactMarkdown>{article.content}</ReactMarkdown>
                </div>
 
