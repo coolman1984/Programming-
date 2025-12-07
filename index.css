@@ -9,24 +9,55 @@
 /* Import Google Fonts - Premium serif for headlines */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-/* CSS Variables for theming */
+/* CSS Variables - Dark Theme Only */
 :root {
+  /* Dark Theme Colors */
+  --background: #0a0a0a;
+  --foreground: 210 40% 98%;
+
+  --card-bg: #111111;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --border-color: #1a1a1a;
+
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Gold Colors */
   --gold-50: #fefce8;
   --gold-100: #fef9c3;
   --gold-200: #fef08a;
   --gold-300: #fde047;
   --gold-400: #facc15;
   --gold-500: #D4AF37;
-  --gold-600: #B8860B;
-  --gold-700: #92710b;
-  --gold-800: #785b0c;
-  --gold-900: #63490e;
+  --gold-600: #ca8a04;
+  --gold-700: #a16207;
+  --gold-800: #854d0e;
+  --gold-900: #713f12;
 
-  --background: #0a0a0a;
-  --card-bg: #111111;
-  --border-color: #1a1a1a;
-
-  /* Professional typography sizing - matching Bloomberg/Reuters/Kitco */
+  /* Typography */
   --font-size-xs: 11px;
   --font-size-sm: 13px;
   --font-size-base: 14px;
@@ -38,23 +69,23 @@
   --font-size-4xl: 34px;
 }
 
-/* Base Styles */
+/* Base Styles with Transition */
 * {
   border-color: var(--border-color);
 }
 
 html {
+  transition: background-color 0.3s ease, color 0.3s ease;
   scroll-behavior: smooth;
   font-size: 14px;
-  /* Professional base size matching financial sites */
 }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: var(--font-size-base);
   line-height: 1.55;
-  background: var(--background);
-  color: #e2e8f0;
+  background-color: var(--background);
+  color: var(--text-primary);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

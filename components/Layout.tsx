@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -34,7 +33,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
 
   return (
-    <div dir={dir} className="min-h-screen bg-[#0a0a0a] text-slate-100 selection:bg-amber-500/30 pb-24 md:pb-20 relative">
+    <div dir={dir} className="min-h-screen bg-background text-foreground selection:bg-amber-500/30 pb-24 md:pb-20 relative transition-colors duration-300">
       <CommandPalette />
 
       {/* Premium Gold Dust Background Effects */}
@@ -50,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
-          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-b border-slate-800/50'
+          ? 'bg-background/80 backdrop-blur-md border-b border-border shadow-sm'
           : 'bg-transparent'
           }`}
       >
@@ -62,11 +61,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <GoldPyramidLogo />
               </div>
               <div>
-                <h1 className="text-xl font-bold font-serif">
-                  <span className="text-white">Gold</span>{' '}
+                <h1 className="text-xl font-bold font-serif text-foreground">
+                  <span className="text-foreground">Gold</span>{' '}
                   <span className="text-gold-gradient">Insight</span>
                 </h1>
-                <p className="text-xs text-slate-500 hidden sm:block tracking-widest uppercase">Premium Market Intelligence</p>
+                <p className="text-xs text-muted-foreground hidden sm:block tracking-widest uppercase">Premium Market Intelligence</p>
               </div>
             </Link>
 
@@ -77,13 +76,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {/* Live Indicator */}
               <div className="hidden lg:flex px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl items-center gap-2">
                 <span className="relative flex h-2 w-2">
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <span className="text-xs font-bold text-emerald-400 tracking-wide uppercase">{t('nav.live')}</span>
+                <span className="text-xs font-bold text-emerald-500 tracking-wide uppercase">{t('nav.live')}</span>
               </div>
 
               {/* Mobile Menu Toggle */}
@@ -91,7 +90,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2.5 rounded-xl glass-hover text-slate-400 hover:text-white md:hidden"
+                className="p-2.5 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground md:hidden"
               >
                 {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </motion.button>
@@ -106,7 +105,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-[#0a0a0a] border-t border-slate-700/50 backdrop-blur-xl"
+              className="md:hidden bg-background border-t border-border backdrop-blur-xl"
             >
               <div className="px-4 py-4 space-y-2">
                 <MobileNavLink href="/" onClick={() => setIsMobileMenuOpen(false)}>Dashboard</MobileNavLink>
@@ -127,15 +126,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-800/50 py-8 mt-12 bg-[#0a0a0a]/50 backdrop-blur-sm">
+      <footer className="relative z-10 border-t border-border py-8 mt-12 bg-background/50 backdrop-blur-sm">
         <div className="max-w-[1400px] mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             © 2025 Gold Insight. Premium Market Intelligence.
           </p>
           <div className="flex items-center gap-4">
-            <span className="text-xs text-slate-500">Powered by</span>
-            <span className="text-xs font-bold text-amber-400 flex items-center gap-1">
-              Gemini AI <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/20 rounded-full">PRO</span>
+            <span className="text-xs text-muted-foreground">Powered by</span>
+            <span className="text-xs font-bold text-amber-500 flex items-center gap-1">
+              Gemini AI <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/10 text-amber-600 rounded-full">PRO</span>
             </span>
           </div>
         </div>
@@ -154,15 +153,15 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children, active }) => (
   <Link
     to={href}
     className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all ${active
-      ? 'text-amber-400 bg-amber-500/10'
-      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+      ? 'text-amber-500 bg-amber-500/10'
+      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
       }`}
   >
     {children}
     {active && (
       <motion.div
         layoutId="activeNavIndicator"
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-amber-400 rounded-full"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-amber-500 rounded-full"
       />
     )}
   </Link>
@@ -178,7 +177,7 @@ const MobileNavLink: React.FC<MobileNavLinkProps> = ({ href, children, onClick }
   <Link
     to={href}
     onClick={onClick}
-    className="block px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all"
+    className="block px-4 py-3 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
   >
     {children}
   </Link>
