@@ -5,9 +5,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, Settings, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { Language } from '../types';
 import { refreshMarketData } from '../services/marketDataService';
 import { GoldPyramidLogo } from './Logo';
+import CommandPalette from './CommandPalette';
+import Breadcrumbs from './Breadcrumbs';
+import FloatingActionButton from './FloatingActionButton';
+import PageTransition from './PageTransition';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,7 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { t, dir, language, setLanguage } = useLanguage();
+  const { t, dir } = useLanguage();
 
   // Handle scroll for navbar glass effect
   useEffect(() => {
@@ -33,9 +36,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
 
   return (
-    <div dir={dir} className="min-h-screen bg-[#0a0a0a] text-slate-100 selection:bg-amber-500/30 pb-24 md:pb-20">
+    <div dir={dir} className="min-h-screen bg-[#0a0a0a] text-slate-100 selection:bg-amber-500/30 pb-24 md:pb-20 relative">
+      <CommandPalette />
+
       {/* Premium Gold Dust Background Effects */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[150px]" />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-yellow-500/3 rounded-full blur-[120px]" />
         <div className="absolute top-1/2 right-1/3 w-[300px] h-[300px] bg-amber-400/5 rounded-full blur-[100px]" />
@@ -47,7 +52,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
-          ? 'bg-[#0a0a0a] backdrop-blur-md border-b border-slate-800/50'
+          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-b border-slate-800/50'
           : 'bg-transparent'
           }`}
       >
@@ -59,11 +64,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <GoldPyramidLogo />
               </div>
               <div>
-                <h1 className="text-xl font-bold">
+                <h1 className="text-xl font-bold font-serif">
                   <span className="text-white">Gold</span>{' '}
                   <span className="text-gold-gradient">Insight</span>
                 </h1>
-                <p className="text-xs text-slate-500 hidden sm:block">Premium Market Intelligence</p>
+                <p className="text-xs text-slate-500 hidden sm:block tracking-widest uppercase">Premium Market Intelligence</p>
               </div>
             </Link>
 
@@ -71,15 +76,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="hidden md:flex items-center gap-1">
               <NavLink href="/" active={location.pathname === '/'}>Dashboard</NavLink>
               <NavLink href="/analysis" active={location.pathname === '/analysis'}>Analysis</NavLink>
+              <div className="h-4 w-[1px] bg-slate-800 mx-2" />
+              <button
+                onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+                className="text-xs text-slate-500 hover:text-amber-400 bg-slate-900/50 hover:bg-slate-800 border border-slate-800 px-2 py-1.5 rounded-lg flex items-center gap-2 transition-all"
+              >
+                <span>Search</span>
+                <kbd className="hidden sm:inline-block font-mono bg-slate-800 border-slate-700 border rounded px-1 text-[10px]">⌘K</kbd>
+              </button>
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-
-
-
               {/* Live Indicator */}
-              <div className="hidden lg:flex px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl items-center gap-2">
+              <div className="hidden lg:flex px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl items-center gap-2 pulse-live">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -107,7 +117,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-[#0a0a0a] border-t border-slate-700/50"
+              className="md:hidden bg-[#0a0a0a] border-t border-slate-700/50 backdrop-blur-xl"
             >
               <div className="px-4 py-4 space-y-2">
                 <MobileNavLink href="/" onClick={() => setIsMobileMenuOpen(false)}>Dashboard</MobileNavLink>
@@ -119,26 +129,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </motion.nav>
 
       {/* Main Content */}
-      <main className="relative max-w-[1400px] mx-auto px-4 md:px-6 pt-32 md:pt-28 pb-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+      <main className="relative max-w-[1400px] mx-auto px-4 md:px-6 pt-32 md:pt-28 pb-10 z-10">
+        <Breadcrumbs />
+
+        <PageTransition locationKey={location.pathname}>
           {children}
-        </motion.div>
+        </PageTransition>
       </main>
 
+      <FloatingActionButton />
 
       {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 glass border-t border-slate-800/50 py-3">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-6 flex items-center justify-between">
+      <footer className="relative z-10 border-t border-slate-800/50 py-8 mt-12 bg-[#0a0a0a]/50 backdrop-blur-sm">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-500">
             © 2025 Gold Insight. Premium Market Intelligence.
           </p>
           <div className="flex items-center gap-4">
             <span className="text-xs text-slate-500">Powered by</span>
-            <span className="text-xs font-bold text-amber-400">Gemini AI</span>
+            <span className="text-xs font-bold text-amber-400 flex items-center gap-1">
+              Gemini AI <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/20 rounded-full">PRO</span>
+            </span>
           </div>
         </div>
       </footer>
