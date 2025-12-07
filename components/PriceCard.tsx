@@ -38,12 +38,11 @@ const PriceCard: React.FC<PriceCardProps> = ({
             {/* Background Glow Effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-amber-600/5 blur-3xl" />
 
-            <div className="relative glass-gold rounded-3xl p-8 md:p-10">
+            <div className="relative glass-gold pulse-live rounded-3xl p-8 md:p-10">
                 {/* Live Indicator */}
                 {isLive && (
                     <div className="absolute top-6 right-6 flex items-center gap-2">
-                        <span className="relative flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative flex h-3 w-3 pulse-dot text-emerald-500">
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
                         </span>
                         <span className="text-emerald-400 text-sm font-medium">LIVE</span>
@@ -52,7 +51,7 @@ const PriceCard: React.FC<PriceCardProps> = ({
 
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg glow-gold-sm">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg glow-gold-sm float-slow">
                         <span className="text-2xl">🥇</span>
                     </div>
                     <div>

@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import NewsFeed from '../components/NewsFeed';
 import PriceChart from '../components/PriceChart';
 import TechnicalOutlook from '../components/TechnicalOutlook';
+import { ChartSkeleton, NewsFeedSkeleton } from '../components/LoadingSpinner';
 import { getAllMarketData, getNews } from '../services/marketDataService';
 import { MarketData, NewsItem } from '../types';
-import { RefreshCw, Sparkles, BrainCircuit, ScanSearch, Loader2 } from 'lucide-react';
+import { Sparkles, BrainCircuit, ScanSearch } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAnalysis } from '../context/AnalysisContext';
 import { ASSETS } from '../constants';
@@ -98,7 +99,7 @@ const Dashboard: React.FC = () => {
          {/* SECTION 1: LIVE SPOT PRICE (Full Width at Top) */}
          <div className="w-full">
             {loading && !activeMarketData ? (
-               <div className="h-[400px] bg-[#111111] border border-slate-800/50 rounded-2xl animate-pulse"></div>
+               <ChartSkeleton className="min-h-[400px]" />
             ) : activeMarketData && (
                <PriceChart data={activeMarketData} />
             )}
@@ -162,9 +163,9 @@ const Dashboard: React.FC = () => {
                   </div>
                </div>
             ) : (
-               <div className="bg-[#111111] border border-slate-800/50 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+               <div className="glass-card rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
                   <div className="flex items-center gap-5">
-                     <div className="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20">
+                     <div className="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20 float-slow">
                         <BrainCircuit size={40} className="text-amber-500" />
                      </div>
                      <div>
@@ -175,10 +176,10 @@ const Dashboard: React.FC = () => {
 
                   <button
                      onClick={handleStartAnalysis}
-                     className="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-black px-8 py-4 rounded-xl font-bold text-lg shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center gap-3 whitespace-nowrap"
+                     className="btn-interactive bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-black px-8 py-4 rounded-xl font-bold text-lg shadow-[0_0_20px_rgba(245,158,11,0.2)] flex items-center gap-3 whitespace-nowrap"
                   >
                      <span>{t('dashboard.hero.cta')}</span>
-                     <Sparkles size={24} className="text-black fill-black/20" />
+                     <Sparkles size={24} className="text-black fill-black/20 icon-hover" />
                   </button>
                </div>
             )}
@@ -190,9 +191,7 @@ const Dashboard: React.FC = () => {
          {/* SECTION 4: MARKET DRIVERS / NEWS */}
          <div>
             {loading && news.length === 0 ? (
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-64 bg-[#111111] rounded-2xl animate-pulse border border-slate-800/50" />)}
-               </div>
+               <NewsFeedSkeleton count={6} />
             ) : (
                <NewsFeed news={news} />
             )}

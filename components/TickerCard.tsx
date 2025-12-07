@@ -23,10 +23,10 @@ const TickerCard: React.FC<TickerCardProps> = ({ data, isActive, onClick }) => {
     <div
       onClick={onClick}
       className={`
-        relative p-8 rounded-2xl cursor-pointer transition-all duration-300 border h-full flex flex-col justify-between
+        relative p-8 rounded-2xl h-full flex flex-col justify-between glass-card interactive-card ripple
         ${isActive
-          ? 'bg-[#111111] border-amber-500/50 shadow-[0_0_25px_rgba(245,158,11,0.15)]'
-          : 'bg-[#111111] border-slate-800/50 hover:border-amber-500/30'
+          ? 'border-amber-500/50 shadow-[0_0_25px_rgba(245,158,11,0.15)]'
+          : 'border-slate-800/50 hover:border-amber-500/30'
         }
       `}
     >

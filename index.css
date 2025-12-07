@@ -92,14 +92,139 @@ h3,
 
 /* Utility Classes */
 @layer utilities {
+  /* ============================================
+     GLASSMORPHISM SYSTEM
+     Premium frosted glass effects
+     ============================================ */
+
+  /* Base glass card - subtle frosted effect */
   .glass-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    background: rgba(17, 17, 17, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow:
+      0 4px 30px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .glass-card:hover {
-    border-color: rgba(212, 175, 55, 0.3);
+    border-color: rgba(212, 175, 55, 0.25);
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.5),
+      0 0 20px rgba(212, 175, 55, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+  }
+
+  /* Premium gold glass - for featured cards */
+  .glass-gold {
+    background: linear-gradient(135deg,
+        rgba(17, 17, 17, 0.9) 0%,
+        rgba(20, 18, 12, 0.85) 50%,
+        rgba(17, 17, 17, 0.9) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    box-shadow:
+      0 4px 30px rgba(0, 0, 0, 0.5),
+      0 0 40px rgba(212, 175, 55, 0.05),
+      inset 0 1px 0 rgba(212, 175, 55, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-gold:hover {
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow:
+      0 12px 50px rgba(0, 0, 0, 0.6),
+      0 0 60px rgba(212, 175, 55, 0.15),
+      inset 0 1px 0 rgba(212, 175, 55, 0.15);
+  }
+
+  /* Intense glass - for modals and overlays */
+  .glass-intense {
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  /* Small gold glow for icons/badges */
+  .glow-gold-sm {
+    box-shadow:
+      0 0 10px rgba(212, 175, 55, 0.3),
+      0 0 20px rgba(212, 175, 55, 0.15);
+  }
+
+  /* ============================================
+     SKELETON LOADER SYSTEM
+     Premium loading states with gold shimmer
+     ============================================ */
+
+  /* Base skeleton element */
+  .skeleton {
+    background: linear-gradient(90deg,
+        rgba(30, 30, 30, 1) 0%,
+        rgba(45, 45, 45, 1) 20%,
+        rgba(30, 30, 30, 1) 40%,
+        rgba(30, 30, 30, 1) 100%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    border-radius: 8px;
+  }
+
+  /* Gold-tinted skeleton for premium feel */
+  .skeleton-gold {
+    background: linear-gradient(90deg,
+        rgba(30, 28, 20, 1) 0%,
+        rgba(50, 45, 25, 1) 20%,
+        rgba(212, 175, 55, 0.15) 35%,
+        rgba(50, 45, 25, 1) 50%,
+        rgba(30, 28, 20, 1) 100%);
+    background-size: 300% 100%;
+    animation: skeleton-gold-shimmer 2s ease-in-out infinite;
+    border-radius: 8px;
+  }
+
+  @keyframes skeleton-shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  @keyframes skeleton-gold-shimmer {
+    0% {
+      background-position: 300% 0;
+    }
+
+    100% {
+      background-position: -300% 0;
+    }
+  }
+
+  /* Skeleton pulse animation */
+  .skeleton-pulse {
+    animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes skeleton-pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.5;
+    }
   }
 
   /* Gold text color */
@@ -227,6 +352,410 @@ h3,
 .card-hover:hover {
   transform: translateY(-2px);
   border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* ============================================
+   PARALLAX SCROLLING EFFECTS
+   Subtle depth on scroll
+   ============================================ */
+
+.parallax-slow {
+  will-change: transform;
+  transition: transform 0.1s ease-out;
+}
+
+.parallax-container {
+  perspective: 1000px;
+  overflow: visible;
+}
+
+.parallax-layer-back {
+  transform: translateZ(-50px) scale(1.05);
+}
+
+.parallax-layer-front {
+  transform: translateZ(50px) scale(0.95);
+}
+
+/* Floating animation for decorative elements */
+.float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.float-medium {
+  animation: float-medium 4s ease-in-out infinite;
+}
+
+.float-fast {
+  animation: float-fast 3s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-medium {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes float-fast {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* ============================================
+   LIVE DATA PULSE ANIMATIONS
+   Premium pulsing for real-time indicators
+   ============================================ */
+
+/* Gold pulse for live data */
+.pulse-live {
+  position: relative;
+}
+
+.pulse-live::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), rgba(250, 204, 21, 0.2));
+  opacity: 0;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+/* Dot pulse for live indicators */
+.pulse-dot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulse-dot::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+  animation: pulse-dot-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-dot-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+
+  70% {
+    transform: scale(2);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Price update flash animation */
+.flash-green {
+  animation: flash-green 0.6s ease-out;
+}
+
+.flash-red {
+  animation: flash-red 0.6s ease-out;
+}
+
+@keyframes flash-green {
+  0% {
+    background-color: rgba(34, 197, 94, 0.3);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes flash-red {
+  0% {
+    background-color: rgba(239, 68, 68, 0.3);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* Heartbeat for critical data */
+.heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  14% {
+    transform: scale(1.05);
+  }
+
+  28% {
+    transform: scale(1);
+  }
+
+  42% {
+    transform: scale(1.05);
+  }
+
+  70% {
+    transform: scale(1);
+  }
+}
+
+/* ============================================
+   HOVER MICRO-ANIMATIONS
+   Delightful interactions for all elements
+   ============================================ */
+
+/* Interactive card with lift and glow */
+.interactive-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.interactive-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow:
+    0 20px 40px -15px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(212, 175, 55, 0.1);
+}
+
+.interactive-card:active {
+  transform: translateY(-2px) scale(0.99);
+  transition-duration: 0.1s;
+}
+
+/* Button micro-interactions */
+.btn-interactive {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-interactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.btn-interactive:hover::before {
+  transform: translateX(100%);
+}
+
+.btn-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -10px rgba(212, 175, 55, 0.4);
+}
+
+.btn-interactive:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 0.1s;
+}
+
+/* Link hover with underline animation */
+.link-animated {
+  position: relative;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link-animated::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #D4AF37, #facc15);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.link-animated:hover::after {
+  width: 100%;
+}
+
+.link-animated:hover {
+  color: #facc15;
+}
+
+/* Icon hover effects */
+.icon-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.icon-hover:hover {
+  transform: scale(1.15) rotate(5deg);
+  color: #D4AF37;
+}
+
+/* Icon with background hover */
+.icon-btn {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: rgba(212, 175, 55, 0.1);
+  transform: scale(1.05);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+/* Badge/tag hover */
+.badge-interactive {
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.badge-interactive:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Number ticker animation for price updates */
+.number-update {
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.number-update.updating {
+  animation: number-flip 0.3s ease;
+}
+
+@keyframes number-flip {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  50% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  51% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Ripple effect on click */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(212, 175, 55, 0.3) 10%, transparent 10%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 0.5s;
+}
+
+.ripple:active::after {
+  transform: scale(0, 0);
+  opacity: 1;
+  transition: 0s;
+}
+
+/* Shine effect on hover */
+.shine-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent);
+  transition: left 0.5s ease;
+}
+
+.shine-hover:hover::before {
+  left: 100%;
 }
 
 /* Recharts Custom Styling */

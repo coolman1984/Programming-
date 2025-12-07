@@ -62,7 +62,7 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ news }) => {
             <div
               key={item.id}
               onClick={() => handleReadAnalysis(item)}
-              className="bg-[#111111] border border-amber-500/20 rounded-xl p-6 relative overflow-hidden h-full flex flex-col hover:border-amber-500/50 transition-all cursor-pointer group shadow-lg hover:shadow-amber-500/10"
+              className="glass-card interactive-card shine-hover rounded-xl p-6 relative overflow-hidden h-full flex flex-col border-amber-500/20 hover:border-amber-500/50 group shadow-lg"
             >
               {/* Header Row */}
               <div className="flex items-start justify-between mb-5">
@@ -96,8 +96,8 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ news }) => {
                 <span className="text-slate-500 text-xs font-medium">
                   {publishDate}
                 </span>
-                <span className="text-amber-500 text-xs font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity tracking-wide">
-                  READ ANALYSIS <ArrowRight size={14} className="stroke-[3]" />
+                <span className="text-amber-500 text-xs font-bold flex items-center gap-1.5 link-animated tracking-wide">
+                  READ ANALYSIS <ArrowRight size={14} className="stroke-[3] icon-hover" />
                 </span>
               </div>
             </div>
