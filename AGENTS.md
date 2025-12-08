@@ -11,9 +11,11 @@
 | **Styling** | TailwindCSS + CSS variables (`index.css`) |
 | **Animation** | Framer Motion |
 | **AI** | Google Gemini (`@google/genai`) |
+| **Charts** | Recharts |
+| **Routing** | React Router DOM (HashRouter) |
 | **Deployment** | Firebase Hosting |
 
-Sub-folder AGENTS.md files exist in `components/` and `services/` for detailed guidance.
+Sub-folder AGENTS.md files exist in `components/`, `services/`, `pages/`, and `context/` for detailed guidance.
 
 ---
 
@@ -34,6 +36,9 @@ npm run preview
 
 # Deploy to Firebase
 firebase deploy --only hosting
+
+# TypeScript check
+npx tsc --noEmit
 ```
 
 ---
@@ -49,15 +54,18 @@ firebase deploy --only hosting
 
 ### File Naming
 
-- Components: `PascalCase.tsx` (e.g., `PriceCard.tsx`)
-- Pages: `PascalCase.tsx` (e.g., `Dashboard.tsx`)
-- Services: `camelCase.ts` (e.g., `geminiService.ts`)
-- Context: `PascalCase.tsx` (e.g., `ThemeContext.tsx`)
+| Type | Convention | Example |
+|------|------------|---------|
+| Components | `PascalCase.tsx` | `PriceCard.tsx` |
+| Pages | `PascalCase.tsx` | `Dashboard.tsx` |
+| Services | `camelCase.ts` | `geminiService.ts` |
+| Context | `PascalCase.tsx` | `ThemeContext.tsx` |
+| Types | `camelCase.ts` | `types.ts` |
 
 ### Imports
 
 - Use relative imports (`../components/X`)
-- Group: React → third-party → local components → utils → types
+- Group order: React → third-party → local components → utils → types
 
 ---
 
@@ -90,29 +98,35 @@ See `API_SECURITY_REPORT.md` for detailed security guidance.
 ├── components/          → [see components/AGENTS.md](components/AGENTS.md)
 │   ├── PriceCard.tsx    # Main price display with animations
 │   ├── DeepAnalysisView.tsx  # AI analysis report view
-│   └── Layout.tsx       # App shell with navigation
-├── pages/               # Route pages (lazy loaded)
-│   ├── Dashboard.tsx    # Main dashboard
+│   ├── Layout.tsx       # App shell with navigation
+│   └── ... (22 components total)
+├── pages/               → [see pages/AGENTS.md](pages/AGENTS.md)
+│   ├── Dashboard.tsx    # Main dashboard (default route)
 │   ├── Analysis.tsx     # Deep analysis page
-│   └── ArticlePage.tsx  # News article detail
+│   ├── AnalysisReportPage.tsx  # Analysis results display
+│   ├── ArticlePage.tsx  # News article detail
+│   └── AssetDetail.tsx  # Asset detail view
 ├── services/            → [see services/AGENTS.md](services/AGENTS.md)
-│   ├── geminiService.ts # AI/Gemini integration
+│   ├── geminiService.ts # AI/Gemini integration (1134 lines)
 │   └── marketDataService.ts  # Gold price data fetching
-├── context/             # React context providers
-│   ├── AnalysisContext.tsx
-│   ├── LanguageContext.tsx
-│   └── ThemeContext.tsx
+├── context/             → [see context/AGENTS.md](context/AGENTS.md)
+│   ├── AnalysisContext.tsx   # AI analysis state management
+│   ├── LanguageContext.tsx   # i18n (English only)
+│   └── ThemeContext.tsx      # Dark/light theme
 ├── src/lib/utils.ts     # Utility functions (cn, formatCurrency)
-├── types.ts             # All TypeScript interfaces
+├── types.ts             # All TypeScript interfaces (204 lines)
 ├── constants.ts         # App constants and assets
-└── index.css            # Global styles + CSS variables
+├── translations.ts      # i18n strings
+├── App.tsx              # Root component with providers
+├── index.tsx            # Entry point
+└── index.css            # Global styles + CSS variables (872 lines)
 ```
 
 ### Quick Find Commands
 
 ```bash
 # Find a React component
-rg -n "export (default function|const) \w+" components/
+rg -n "export default" components/
 
 # Find a type/interface definition
 rg -n "export (type|interface) \w+" types.ts
@@ -120,7 +134,7 @@ rg -n "export (type|interface) \w+" types.ts
 # Find API service function
 rg -n "export const \w+ = async" services/
 
-# Find context usage
+# Find context hook usage
 rg -n "use(Language|Analysis|Theme)" components/ pages/
 
 # Find Tailwind class patterns
@@ -128,6 +142,12 @@ rg -n "className=" components/ --include "*.tsx"
 
 # Find Framer Motion animations
 rg -n "motion\." components/
+
+# Find route definitions
+rg -n "<Route" App.tsx
+
+# Find CSS variables
+rg -n "^--" index.css
 ```
 
 ---
@@ -138,8 +158,11 @@ rg -n "motion\." components/
 
 ```tsx
 // components/ExampleComponent.tsx
+import React from 'react';
 import { motion } from 'framer-motion';
+import { SomeIcon } from 'lucide-react';
 import { cn } from '../src/lib/utils';
+import { SomeType } from '../types';
 
 interface ExampleProps {
   title: string;
@@ -176,6 +199,35 @@ const fetchData = async (): Promise<Data> => {
 };
 ```
 
+### Context Pattern
+
+```tsx
+// context/ExampleContext.tsx
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+
+interface ContextType {
+  value: string;
+  setValue: (v: string) => void;
+}
+
+const ExampleContext = createContext<ContextType | undefined>(undefined);
+
+export const ExampleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [value, setValue] = useState('');
+  return (
+    <ExampleContext.Provider value={{ value, setValue }}>
+      {children}
+    </ExampleContext.Provider>
+  );
+};
+
+export const useExample = () => {
+  const context = useContext(ExampleContext);
+  if (!context) throw new Error('useExample must be used within ExampleProvider');
+  return context;
+};
+```
+
 ---
 
 ## Testing
@@ -186,7 +238,7 @@ const fetchData = async (): Promise<Data> => {
 If adding tests, use **Vitest** (Vite's native test runner):
 
 ```bash
-npm install -D vitest @testing-library/react
+npm install -D vitest @testing-library/react @testing-library/jest-dom
 ```
 
 ---
@@ -196,7 +248,8 @@ npm install -D vitest @testing-library/react
 Before submitting changes:
 
 - [ ] `npm run build` completes without errors
-- [ ] No TypeScript errors in changed files
+- [ ] `npx tsc --noEmit` passes with no TypeScript errors
 - [ ] No hardcoded API keys in source code
-- [ ] Component follows existing patterns (see examples)
-- [ ] Imports are properly organized
+- [ ] Component follows existing patterns (see sub-folder AGENTS.md)
+- [ ] Imports are properly organized (React → third-party → local → types)
+- [ ] New components use `cn()` for dynamic Tailwind classes
