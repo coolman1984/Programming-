@@ -1,0 +1,26 @@
+{
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Bash",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE 'rm\\s+-rf|--force|git\\s+push.*-f|git\\s+reset.*--hard'; then echo 'BLOCKED: Dangerous command detected. Please confirm with user first.' && exit 2; fi"
+                    }
+                ]
+            }
+        ],
+        "PostToolUse": [
+            {
+                "matcher": "Edit|MultiEdit|Write",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "for f in $CLAUDE_FILE_PATHS; do if [[ \"$f\" =~ \\.(ts|tsx)$ ]]; then npx prettier --write \"$f\" 2>/dev/null || true; fi; done"
+                    }
+                ]
+            }
+        ]
+    }
+}
