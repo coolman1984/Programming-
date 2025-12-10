@@ -154,6 +154,18 @@ export interface DeepAnalysisData {
 
   risk_overview?: string;
   market_outlook?: string;
+
+  // Bank opinions - Top 10 major banks' gold forecasts
+  bank_opinions?: {
+    summary: string;  // 8 lines of professional analysis about bank consensus
+    banks: {
+      name: string;
+      stance: 'bullish' | 'bearish' | 'neutral';
+      price_target?: string;
+      timeframe?: string;
+      comment?: string;
+    }[];
+  };
 }
 
 export interface ChatMessage {

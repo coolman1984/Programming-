@@ -330,10 +330,29 @@ GENERATE A COMPREHENSIVE JSON ANALYSIS with ALL fields populated with SUBSTANTIA
   },
   
   "factors_bullish": ["Fed rate cut expectations", "Dollar weakness", "Central bank buying", "Geopolitical tensions", "ETF inflows"],
-  "factors_bearish": ["Strong US jobs data", "Equity rally reducing haven demand"]
+  "factors_bearish": ["Strong US jobs data", "Equity rally reducing haven demand"],
+  
+  "bank_opinions": {
+    "summary": "WRITE EXACTLY 8 LINES of high-quality professional analysis about what major global banks think about gold. Include which banks are bullish/bearish, their price targets, reasoning, and the overall institutional consensus. Write in article-style prose, not bullet points. Use [Source: Name] citations throughout.",
+    "banks": [
+      {"name": "Goldman Sachs", "stance": "bullish", "price_target": "$2,700", "timeframe": "12 months", "comment": "Rate cuts to drive gold higher"},
+      {"name": "JPMorgan", "stance": "bullish", "price_target": "$2,500", "timeframe": "Q1 2025", "comment": "Central bank demand robust"},
+      {"name": "UBS", "stance": "bullish", "price_target": "$2,600", "timeframe": "2024", "comment": "Geopolitical risks supporting"},
+      {"name": "Citi", "stance": "bullish", "price_target": "$2,800", "timeframe": "12 months", "comment": "Fed pivot underway"},
+      {"name": "Bank of America", "stance": "neutral", "price_target": "$2,400", "timeframe": "Q2 2025", "comment": "Consolidation expected"},
+      {"name": "Deutsche Bank", "stance": "bullish", "price_target": "$2,650", "timeframe": "2024", "comment": "Dollar weakness supportive"},
+      {"name": "HSBC", "stance": "neutral", "price_target": "$2,350", "timeframe": "Year-end", "comment": "Range-bound near term"},
+      {"name": "Credit Suisse", "stance": "bullish", "price_target": "$2,550", "timeframe": "2024 H2", "comment": "Macro tailwinds intact"},
+      {"name": "Barclays", "stance": "bullish", "price_target": "$2,500", "timeframe": "Year-end", "comment": "ETF flows resuming"},
+      {"name": "Morgan Stanley", "stance": "neutral", "price_target": "$2,300", "timeframe": "Q1 2025", "comment": "Watching Fed closely"}
+    ]
+  }
 }
 
-CRITICAL: Each text field (macro_analysis, geopolitical_analysis, etc.) MUST be 4-5 FULL paragraphs. NOT 1-2 sentences.`;
+CRITICAL: 
+1. The executive_summary MUST be 8-10 full sentences in professional article style
+2. The bank_opinions.summary MUST be exactly 8 lines of professional analysis prose
+3. Each text field MUST be comprehensive - NOT abbreviated`;
 
     const result = await callOpenRouter([
         { role: 'system', content: systemPrompt },
