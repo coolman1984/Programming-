@@ -1,56 +1,13 @@
 // ============================================================================
 // GEMINI SERVICE - TWO-AI PIPELINE
 // ============================================================================
-// Step 1: Perplexity Sonar Pro (via OpenRouter) fetches real-time market data
+// Step 1: Deep Research fetches real-time market data via search
 // Step 2: Gemini 2.0 Flash synthesizes polished, publication-quality articles
 // ============================================================================
 
 import { MarketArticle, DeepAnalysisData, NewsItem, AnalysisSource, TechnicalOutlookData, Language, SearchResult, SearchSource, Asset, MarketData } from '../types';
 import { searchDuckDuckGo, fetchPageContent, SearchResult as DDGResult } from './searchService';
-
-// ============================================================================
-// AI PERSONA DEFINITIONS
-// ============================================================================
-
-const RESEARCH_EXPERT_PROMPT = `You are a Meticulous Research Expert AI with STRICT DATE VALIDATION.
-
-CURRENT DATE: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-
-Your GOAL: Extract ONLY verified facts from the PAST 7 DAYS. Reject ALL outdated data.
-
-CRITICAL DATE RULES:
-1. ONLY accept data dated within the last 7 days (from today: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })})
-2. If an article is from 2024 or earlier, REJECT IT COMPLETELY.
-3. If you cannot verify the date is recent (December 2025), DO NOT USE that data.
-4. If NO recent data is available, explicitly state: "NO RECENT DATA AVAILABLE - Cannot provide reliable analysis."
-
-Your OUTPUT: Structured, purely factual Research Notes from RECENT sources only.
-
-Your RULES:
-1. NO FLUFF. Only hard data and verified claims FROM THE LAST 7 DAYS.
-2. CITATIONS: Keep [Source: Domain, Date] for every fact. INCLUDE THE DATE.
-3. NUMBERS: Preserve exact prices, dates, and percentages.
-4. DATE CHECK: Before including ANY fact, verify its date is within 7 days of today.
-5. If data is conflicting, note the discrepancy.
-6. If data is old (>7 days) or undated, REJECT IT and note "Data rejected: outdated or undated".
-`;
-
-const WRITER_PROMPT = `You are a Senior Financial Editor and Writer with STRICT ACCURACY standards.
-
-CURRENT DATE: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-
-Your GOAL: Write professional, publication-ready financial content using ONLY the provided Research Notes.
-
-CRITICAL RULES:
-1. ONLY use facts from the Research Notes that have dates within the last 7 days.
-2. If the Research Notes say "NO RECENT DATA AVAILABLE", DO NOT make up information.
-3. If you don't have recent data, explicitly say so in your output.
-4. NEVER hallucinate prices, dates, or facts not in the Research Notes.
-5. TONE: Authoritative, objective, and sophisticated (Bloomberg/WSJ style).
-6. ACCURACY: Strictly follow the numbers in the Research Notes. Do not hallucinate.
-7. CITATIONS: Use the citations provided in the notes, INCLUDING dates.
-8. If the Research Notes are sparse or outdated, reduce confidence score accordingly.
-`;
+import { RESEARCH_EXPERT_PROMPT, WRITER_PROMPT, getTechnicalOutlookPrompt, getDeepAnalysisPrompt } from '../prompts';
 
 // ============================================================================
 // API CONFIGURATION

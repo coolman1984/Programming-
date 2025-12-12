@@ -6,22 +6,15 @@ export interface SearchResult {
     date?: string;
 }
 
-// Proxies to try in order (multiple fallbacks for reliability)
-const PROXIES = [
-    'https://api.allorigins.win/raw?url=',
-    'https://corsproxy.io/?',
-    'https://api.codetabs.com/v1/proxy?quest=', // Additional fallback
-    'https://thingproxy.freeboard.io/fetch/'     // Another fallback
-];
+import { PROXIES, TIMEOUTS } from '../config/constants';
 
-// Approved sources for filtering (Google News supports site: operator)
-const APPROVED_SOURCES = [
+// Allowed/trusted news sources for gold data
+const ALLOWED_DOMAINS = [
+    'kitco.com',
+    'gold.org',
     'bloomberg.com',
     'reuters.com',
-    'ft.com',
-    'investing.com',
-    'kitco.com',
-    'gold.org'
+    'investing.com'
 ];
 
 const fetchWithRetries = async (url: string): Promise<string> => {
@@ -33,7 +26,7 @@ const fetchWithRetries = async (url: string): Promise<string> => {
 
             // Add timeout to prevent hanging
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+            const timeoutId = setTimeout(() => controller.abort(), TIMEOUTS.PROXY); // 8s timeout
 
             const response = await fetch(proxyUrl, { signal: controller.signal });
             clearTimeout(timeoutId);
@@ -89,7 +82,7 @@ export const searchDuckDuckGo = async (query: string): Promise<SearchResult[]> =
     // "DuckDuckGo" function name kept for compatibility with existing imports
 
     try {
-        const siteFilter = APPROVED_SOURCES.map(site => `site:${site}`).join(' OR ');
+        const siteFilter = ALLOWED_DOMAINS.map((site: string) => `site:${site}`).join(' OR ');
 
         // Attempt 1: Strict (Specific sites + Last 7 days - ENFORCE RECENT DATA ONLY)
         let results = await queryGoogleRSS(`${query} ${siteFilter} when:7d`);
@@ -116,7 +109,7 @@ export const searchDuckDuckGo = async (query: string): Promise<SearchResult[]> =
         // Filter broad results for approved sources if possible, but keep others if high quality
         const filtered = results.filter(r => {
             const s = r.source.toLowerCase();
-            return APPROVED_SOURCES.some(approved => s.includes(approved.replace('.com', '')));
+            return ALLOWED_DOMAINS.some((approved: string) => s.includes(approved.replace('.com', '')));
         });
 
         if (filtered.length > 0) {
