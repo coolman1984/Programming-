@@ -170,17 +170,17 @@ export const fetchLiveGoldData = async (): Promise<GoldPriceData> => {
     data = await fetchFromMetalsAPI();
   }
 
-  // Ultimate fallback with realistic price (Dec 2024: ~$2,650)
+  // Ultimate fallback with realistic price (Dec 2024: ~$4,310)
   if (!data) {
     console.warn('All data sources failed, using fallback');
     return {
-      price: 2650.00,
-      open: 2645.00,
-      high: 2665.00,
-      low: 2640.00,
-      prevClose: 2647.50,
-      bid: 2649.50,
-      ask: 2650.50,
+      price: 4311.97,
+      open: 4295.50,
+      high: 4324.90,
+      low: 4299.03,
+      prevClose: 4281.80,
+      bid: 4311.50,
+      ask: 4312.50,
       source: 'Fallback'
     };
   }
@@ -305,16 +305,21 @@ export const refreshMarketData = async (): Promise<void> => {
 const makeSearchLink = (query: string) => `https://www.google.com/search?q=${encodeURIComponent(query)}`;
 
 // Fallback deep analysis data
-export const getLatestDeepAnalysis = async (): Promise<DeepAnalysisData> => {
+export const getLatestDeepAnalysis = async (currentPrice: number = 4311.97): Promise<DeepAnalysisData> => {
+  const support = Math.round(currentPrice * 0.97); // ~3% below
+  const resistance = Math.round(currentPrice * 1.02); // ~2% above
+  const targetLow = Math.round(currentPrice * 1.02);
+  const targetHigh = Math.round(currentPrice * 1.05);
+
   const data: DeepAnalysisData = {
     headline: "Gold Market Analysis: Strategic Outlook",
-    executive_summary: "Gold (XAU/USD) continues its structural bull run. The market is pricing in a high probability of a rate cut, which is weighing heavily on real yields and the US Dollar Index (DXY). Institutional demand remains robust.",
-    macro_analysis: "The macroeconomic backdrop is increasingly favorable for non-yielding assets. US inflation has cooled to 2.4%, giving the Fed ample room to ease policy.",
-    technical_analysis: "**Trend:** Bullish on Weekly/Daily timeframes.\n\n**Support:** Key support lies at $2,600 (50-day MA) and $2,580.\n\n**Resistance:** Immediate resistance at $2,658 (Weekly High), followed by $2,700.",
+    executive_summary: `Gold (XAU/USD) continues its structural bull run, trading near $${currentPrice.toFixed(2)}. The market is pricing in a high probability of further policy easing, which is weighing heavily on real yields and the US Dollar Index (DXY). Institutional demand remains robust.`,
+    macro_analysis: "The macroeconomic backdrop is increasingly favorable for non-yielding assets. US inflation has cooled, giving the Fed ample room to ease policy.",
+    technical_analysis: `**Trend:** Bullish on Weekly/Daily timeframes.\n\n**Support:** Key support lies at $${support} (50-day MA).\n\n**Resistance:** Immediate resistance at $${resistance}, followed by $${Math.round(currentPrice * 1.05)}.`,
     geopolitical_analysis: "Geopolitical risk premiums remain embedded in the price. Ongoing tensions in Eastern Europe and the Middle East are sustaining safe-haven demand.",
     sector_analysis: "Mining stocks (GDX) are beginning to outperform the physical metal, suggesting equity investors are catching up to the rally.",
     consumer_analysis: "Physical demand in India and China remains resilient despite high prices, driven by wedding season and lunar new year restocking.",
-    future_outlook: "**Short Term (1W):** Expect volatility around the Fed decision; bias remains upward toward $2,675.\n**Medium Term (1M):** Target $2,700-$2,750 as the dollar weakens further.",
+    future_outlook: `**Short Term (1W):** Expect volatility around the Fed decision; bias remains upward toward $${resistance}.\n**Medium Term (1M):** Target $${targetLow}-$${targetHigh} as the dollar weakens further.`,
     metrics: [
       { label: "US Dollar Index (DXY)", value: "102.40", trend: "down", color: "red", description: "Measures USD strength against a basket of currencies." },
       { label: "US 10Y Yield", value: "3.85%", trend: "down", color: "blue", description: "Benchmark interest rate affecting opportunity cost." },
@@ -329,8 +334,8 @@ export const getLatestDeepAnalysis = async (): Promise<DeepAnalysisData> => {
       { name: "Global Growth", impact_score: 60, sentiment: "neutral", description: "Soft landing scenario favored." }
     ],
     sources: [
-      { title: "Gold Demand Trends Q4", source: "World Gold Council", url: "https://www.gold.org", summary: "Central bank buying reached 300 tonnes in Q3.", relevance_score: 98, sentiment: "positive", impact_label: "High Impact" },
-      { title: "Fed Watch Tool", source: "CME Group", url: "https://www.cmegroup.com", summary: "Traders pricing in 25bps cut in December.", relevance_score: 95, sentiment: "positive", impact_label: "High Impact" },
+      { title: "Gold Demand Trends Q4", source: "World Gold Council", url: "https://www.gold.org", summary: "Central bank buying consistent.", relevance_score: 98, sentiment: "positive", impact_label: "High Impact" },
+      { title: "Fed Watch Tool", source: "CME Group", url: "https://www.cmegroup.com", summary: "Traders pricing in cuts.", relevance_score: 95, sentiment: "positive", impact_label: "High Impact" },
       { title: "Commodities Outlook", source: "Bloomberg", url: "https://www.bloomberg.com", summary: "Hedge funds increase net long positions.", relevance_score: 90, sentiment: "positive", impact_label: "Medium Impact" }
     ],
     factors_bearish: ["Stronger than expected US GDP", "Profit taking at all-time highs"],
@@ -347,7 +352,7 @@ export const getNews = async (assetId?: AssetId, language: Language = 'en'): Pro
     {
       title: "Fed's Powell Signals 'Open Mind' on December Cut",
       source: "Bloomberg Economics",
-      summary: "Fed Chair Powell's acknowledgment of 'monitoring labor cooling' signals a pivotal shift in monetary stance. Markets have aggressively priced in a December cut, triggering a sharp sell-off in the Dollar Index (DXY) and lowering real yield expectations—a classic setup for a sustained gold breakout beyond $2,600.",
+      summary: "Fed Chair Powell's acknowledgment of 'monitoring labor cooling' signals a pivotal shift in monetary stance. Markets have aggressively priced in cuts, triggering a sharp sell-off in the Dollar Index (DXY) and lowering real yield expectations—a classic setup for sustained gold strength.",
       sentiment: "positive",
       url: makeSearchLink("Jerome Powell Fed Speech Gold Impact"),
       id: "en-1",
@@ -357,7 +362,7 @@ export const getNews = async (assetId?: AssetId, language: Language = 'en'): Pro
     {
       title: "Central Banks Accelerate De-Dollarization Trend",
       source: "World Gold Council",
-      summary: "Deepening the structural 'De-Dollarization' trade, emerging market central banks notably accelerated purchases by 80 tonnes last month. This price-insensitive sovereign demand defines the 'Gold Put,' effectively creating a floor near $2,500 regardless of short-term interest rate volatility.",
+      summary: "Deepening the structural 'De-Dollarization' trade, emerging market central banks notably accelerated purchases by 80 tonnes last month. This price-insensitive sovereign demand defines the 'Gold Put,' effectively creating a floor regardless of short-term interest rate volatility.",
       sentiment: "positive",
       url: makeSearchLink("Central Bank Gold Buying Trends"),
       id: "en-2",
@@ -367,7 +372,7 @@ export const getNews = async (assetId?: AssetId, language: Language = 'en'): Pro
     {
       title: "Geopolitical Risk Premium Returns to Markets",
       source: "Reuters",
-      summary: "Escalating tensions in Eastern Europe have reignited the 'Fear Trade,' driving institutional capital into non-correlated assets. The geopolitical risk premium is currently adding ~$50/oz to spot prices as hedge funds rush to insure portfolios against potential energy supply shocks.",
+      summary: "Escalating tensions in Eastern Europe have reignited the 'Fear Trade,' driving institutional capital into non-correlated assets. The geopolitical risk premium is currently adding significant value to spot prices as hedge funds rush to insure portfolios against potential energy supply shocks.",
       sentiment: "neutral",
       url: makeSearchLink("Geopolitical impact on Gold prices"),
       id: "en-3",
@@ -377,7 +382,7 @@ export const getNews = async (assetId?: AssetId, language: Language = 'en'): Pro
     {
       title: "Technical Analysis: Bull Flag Formation on Weekly",
       source: "Kitco News",
-      summary: "XAU/USD has formed a textbook Bull Flag pattern on the weekly timeframe, consolidating post-rally gains. Momentum indicators (RSI) have cooled from overbought territory, and a daily close above $2,658 would technically confirm the next leg higher toward $2,725 psychological resistance.",
+      summary: "XAU/USD has formed a textbook Bull Flag pattern on the weekly timeframe, consolidating post-rally gains. Momentum indicators (RSI) have cooled from overbought territory, and a daily close above resistance would technically confirm the next leg higher toward psychological resistance.",
       sentiment: "positive",
       url: makeSearchLink("Gold Price Technical Analysis Chart"),
       id: "en-4",

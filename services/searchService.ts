@@ -6,10 +6,12 @@ export interface SearchResult {
     date?: string;
 }
 
-// Proxies to try in order
+// Proxies to try in order (multiple fallbacks for reliability)
 const PROXIES = [
     'https://api.allorigins.win/raw?url=',
-    'https://corsproxy.io/?'
+    'https://corsproxy.io/?',
+    'https://api.codetabs.com/v1/proxy?quest=', // Additional fallback
+    'https://thingproxy.freeboard.io/fetch/'     // Another fallback
 ];
 
 // Approved sources for filtering (Google News supports site: operator)
@@ -27,12 +29,19 @@ const fetchWithRetries = async (url: string): Promise<string> => {
     for (const proxy of PROXIES) {
         try {
             const proxyUrl = `${proxy}${encodeURIComponent(url)}`;
-            console.log(`[Search] Fetching via ${proxy}...`);
-            const response = await fetch(proxyUrl);
+            console.log(`[Search] Fetching via ${proxy.split('/')[2]}...`);
+
+            // Add timeout to prevent hanging
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+
+            const response = await fetch(proxyUrl, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
             if (!response.ok) throw new Error(`Status ${response.status}`);
             return await response.text();
-        } catch (e) {
-            console.warn(`[Search] Proxy ${proxy} failed:`, e);
+        } catch (e: any) {
+            console.warn(`[Search] Proxy failed:`, e.message || e);
             lastError = e;
         }
     }
@@ -82,12 +91,13 @@ export const searchDuckDuckGo = async (query: string): Promise<SearchResult[]> =
     try {
         const siteFilter = APPROVED_SOURCES.map(site => `site:${site}`).join(' OR ');
 
-        // Attempt 1: Strict (Specific sites + Last 24h)
-        let results = await queryGoogleRSS(`${query} ${siteFilter} when:1d`);
+        // Attempt 1: Strict (Specific sites + Last 7 days - ENFORCE RECENT DATA ONLY)
+        let results = await queryGoogleRSS(`${query} ${siteFilter} when:7d`);
         if (results.length > 0) {
-            console.log(`[Search] Found ${results.length} items (Strict)`);
+            console.log(`[Search] Found ${results.length} items (Last 7 days)`);
             return results.slice(0, 5);
         }
+
 
         // Attempt 2: Relaxed Date (Specific sites + Any time)
         console.log('[Search] Strict search empty. Retrying without date constraint...');

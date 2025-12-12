@@ -7,7 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const AnalysisReportPage: React.FC = () => {
-  const { analysisResult, clearAnalysis } = useAnalysis();
+  const { analysisResult, clearAnalysis, technicalOutlook, lastAnalysisPrice } = useAnalysis();
   const navigate = useNavigate();
   const { t } = useLanguage();
 
@@ -34,7 +34,7 @@ const AnalysisReportPage: React.FC = () => {
         {t('article.back')}
       </button>
 
-      <DeepAnalysisView data={analysisResult} />
+      <DeepAnalysisView data={analysisResult} technicalOutlookData={technicalOutlook} currentPrice={lastAnalysisPrice} />
 
       <div className="mt-12 text-center border-t border-amber-500/20 pt-8">
         <h3 className="text-white font-bold mb-4 text-xl font-serif">Analyze Another Scenario?</h3>

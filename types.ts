@@ -202,14 +202,23 @@ export interface AIPrediction {
 export interface TechnicalOutlookData {
   sentiment: 'bullish' | 'bearish' | 'neutral';
   confidence: number;
-  summary: string;
+  summary: string; // 4 lines: current price, direction, key insight, outlook
+  confidence_explanation: string; // 2 lines explaining the AI confidence score
   strengthening_factors: number;
   weakening_factors: number;
+  strengthening_list: { // Detailed bullish factors
+    name: string;
+    brief: string; // One-line explanation
+  }[];
+  weakening_list: { // Detailed bearish factors
+    name: string;
+    brief: string; // One-line explanation
+  }[];
   key_drivers: {
     name: string;
     impact: number;
     sentiment: 'bullish' | 'bearish' | 'neutral';
-    description: string;
+    description: string; // More detailed (2 lines)
   }[];
   generated_at: string;
 }

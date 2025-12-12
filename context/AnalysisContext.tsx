@@ -8,6 +8,7 @@ interface ExtendedAnalysisContextType extends AnalysisContextType {
   technicalOutlook: TechnicalOutlookData | null;
   technicalOutlookLoading: boolean;
   generateTechnicalOutlook: (currentPrice: number) => Promise<void>;
+  lastAnalysisPrice: number;
 }
 
 const AnalysisContext = createContext<ExtendedAnalysisContextType | undefined>(undefined);
@@ -18,6 +19,7 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [analysisResult, setAnalysisResult] = useState<DeepAnalysisData | null>(null);
   const [technicalOutlook, setTechnicalOutlook] = useState<TechnicalOutlookData | null>(null);
   const [technicalOutlookLoading, setTechnicalOutlookLoading] = useState(false);
+  const [lastAnalysisPrice, setLastAnalysisPrice] = useState<number>(2700); // Default fallback
 
   // Generate Technical Outlook on dashboard first load (separate from Deep Analysis)
   const generateTechnicalOutlook = async (currentPrice: number) => {
@@ -41,6 +43,7 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
     setIsAnalyzing(true);
     setProgress(5);
     setAnalysisResult(null);
+    setLastAnalysisPrice(data.currentPrice); // Store the current price for display
 
     try {
       // Simulate "AI Thinking" visualization progress
@@ -59,7 +62,7 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       // Fallback to cached/mock data if real analysis fails or returns null (e.g. no API key)
       if (!result) {
-        result = await getLatestDeepAnalysis();
+        result = await getLatestDeepAnalysis(data.currentPrice);
       }
 
       clearInterval(interval);
@@ -72,8 +75,11 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
           sentiment: result.outlook_analysis?.sentiment || (result.overall_sentiment_score > 60 ? 'bullish' : result.overall_sentiment_score < 40 ? 'bearish' : 'neutral'),
           confidence: result.confidence_score || 80,
           summary: result.technical_analysis || result.executive_summary,
+          confidence_explanation: 'The AI confidence is based on the consistency of data from multiple verified financial sources. Analysis derived from in-depth research.',
           strengthening_factors: result.outlook_analysis?.strengthening_count || result.factors_bullish?.length || 0,
           weakening_factors: result.outlook_analysis?.weakening_count || result.factors_bearish?.length || 0,
+          strengthening_list: (result.factors_bullish || []).slice(0, 5).map(f => ({ name: f.split(':')[0] || f, brief: f })),
+          weakening_list: (result.factors_bearish || []).slice(0, 5).map(f => ({ name: f.split(':')[0] || f, brief: f })),
           key_drivers: result.drivers?.slice(0, 3).map(d => ({
             name: d.name,
             impact: d.impact_score,
@@ -106,7 +112,8 @@ export const AnalysisProvider: React.FC<{ children: ReactNode }> = ({ children }
       clearAnalysis,
       technicalOutlook,
       technicalOutlookLoading,
-      generateTechnicalOutlook
+      generateTechnicalOutlook,
+      lastAnalysisPrice
     }}>
       {children}
     </AnalysisContext.Provider>

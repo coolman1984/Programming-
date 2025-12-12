@@ -16,5 +16,5 @@ export const MOCK_NEWS_TITLES = [
   "Central Banks continue record gold buying spree in Q4",
   "Geopolitical tensions in Middle East support safe-haven demand",
   "US Dollar Index (DXY) weakness boosts bullion appeal",
-  "Technical breakout above $2,700 targets new highs"
+  "Technical breakout above key resistance targets new highs"
 ];
