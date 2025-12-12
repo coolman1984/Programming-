@@ -1,0 +1,141 @@
+/**
+ * Base Styles - Variables, Typography, Reset
+ * 
+ * This file contains foundational styles that apply globally.
+ */
+
+/* Import Google Fonts - MUST be first */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ============================================
+   CSS VARIABLES - DESIGN TOKENS
+   ============================================ */
+
+:root {
+    /* Dark Theme Colors */
+    --background: #0a0a0a;
+    --foreground: 210 40% 98%;
+
+    --card-bg: #111111;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --border-color: #1a1a1a;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Gold Colors */
+    --gold-50: #fefce8;
+    --gold-100: #fef9c3;
+    --gold-200: #fef08a;
+    --gold-300: #fde047;
+    --gold-400: #facc15;
+    --gold-500: #D4AF37;
+    --gold-600: #ca8a04;
+    --gold-700: #a16207;
+    --gold-800: #854d0e;
+    --gold-900: #713f12;
+
+    /* Typography Scale */
+    --font-size-xs: 11px;
+    --font-size-sm: 13px;
+    --font-size-base: 14px;
+    --font-size-md: 15px;
+    --font-size-lg: 17px;
+    --font-size-xl: 20px;
+    --font-size-2xl: 24px;
+    --font-size-3xl: 28px;
+    --font-size-4xl: 34px;
+}
+
+/* ============================================
+   BASE RESET & TYPOGRAPHY
+   ============================================ */
+
+* {
+    border-color: var(--border-color);
+}
+
+html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+    scroll-behavior: smooth;
+    font-size: 14px;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: var(--font-size-base);
+    line-height: 1.55;
+    background-color: var(--background);
+    color: var(--text-primary);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.01em;
+}
+
+/* Serif headlines - premium financial publications style */
+h1,
+h2,
+h3,
+.font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.02em;
+}
+
+/* Selection Styling */
+::selection {
+    background: rgba(212, 175, 55, 0.3);
+    color: #fff;
+}
+
+/* Focus Styles */
+*:focus-visible {
+    outline: 2px solid #D4AF37;
+    outline-offset: 2px;
+}
+
+/* ============================================
+   PREMIUM SCROLLBAR
+   ============================================ */
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #facc15 0%, #D4AF37 100%);
+}

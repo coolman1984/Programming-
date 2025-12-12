@@ -1,0 +1,162 @@
+/**
+ * Component Styles - Glassmorphism, Cards, Buttons
+ */
+
+@layer utilities {
+    /* ============================================
+     GLASSMORPHISM SYSTEM
+     Premium frosted glass effects
+     ============================================ */
+
+    /* Base glass card - subtle frosted effect */
+    .glass-card {
+        background: rgba(17, 17, 17, 0.8);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow:
+            0 4px 30px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+        border-color: rgba(212, 175, 55, 0.25);
+        box-shadow:
+            0 8px 40px rgba(0, 0, 0, 0.5),
+            0 0 20px rgba(212, 175, 55, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+    }
+
+    /* Premium gold glass - for featured cards */
+    .glass-gold {
+        background: linear-gradient(135deg,
+                rgba(17, 17, 17, 0.9) 0%,
+                rgba(20, 18, 12, 0.85) 50%,
+                rgba(17, 17, 17, 0.9) 100%);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(212, 175, 55, 0.15);
+        box-shadow:
+            0 4px 30px rgba(0, 0, 0, 0.5),
+            0 0 40px rgba(212, 175, 55, 0.05),
+            inset 0 1px 0 rgba(212, 175, 55, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-gold:hover {
+        border-color: rgba(212, 175, 55, 0.35);
+        box-shadow:
+            0 12px 50px rgba(0, 0, 0, 0.6),
+            0 0 60px rgba(212, 175, 55, 0.15),
+            inset 0 1px 0 rgba(212, 175, 55, 0.15);
+    }
+
+    /* Intense glass - for modals and overlays */
+    .glass-intense {
+        background: rgba(10, 10, 10, 0.85);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow:
+            0 25px 50px -12px rgba(0, 0, 0, 0.8),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* ============================================
+     GOLD UTILITIES
+     ============================================ */
+
+    .text-gold {
+        color: #D4AF37;
+    }
+
+    .text-gold-gradient {
+        background: linear-gradient(135deg, #D4AF37 0%, #facc15 50%, #B8860B 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .glow-gold {
+        box-shadow:
+            0 0 20px rgba(212, 175, 55, 0.3),
+            0 0 40px rgba(212, 175, 55, 0.2);
+    }
+
+    .glow-gold-sm {
+        box-shadow:
+            0 0 10px rgba(212, 175, 55, 0.3),
+            0 0 20px rgba(212, 175, 55, 0.15);
+    }
+
+    /* ============================================
+     PRICE COLORS
+     ============================================ */
+
+    .price-up {
+        color: #22c55e;
+    }
+
+    .price-down {
+        color: #ef4444;
+    }
+
+    /* ============================================
+     BUTTONS
+     ============================================ */
+
+    .btn-gold {
+        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+        color: #0a0a0a;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-gold:hover {
+        background: linear-gradient(135deg, #facc15 0%, #D4AF37 100%);
+        box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
+        transform: translateY(-2px);
+    }
+
+    /* ============================================
+     CARDS & INTERACTIONS
+     ============================================ */
+
+    .card-hover {
+        transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+        transform: translateY(-2px);
+        border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    .interactive-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+
+    .interactive-card:hover {
+        transform: translateY(-4px) scale(1.01);
+        box-shadow:
+            0 20px 40px -15px rgba(0, 0, 0, 0.5),
+            0 0 30px rgba(212, 175, 55, 0.1);
+    }
+
+    .interactive-card:active {
+        transform: translateY(-2px) scale(0.99);
+        transition-duration: 0.1s;
+    }
+
+    /* ============================================
+     NUMBER STYLING
+     ============================================ */
+
+    .number-ticker {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
+    }
+}
