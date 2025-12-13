@@ -2,6 +2,20 @@
 import { GoogleGenAI, Chat } from "@google/genai";
 import { MarketArticle, NewsItem, Language, SearchResult, SearchSource, Asset, MarketData, DeepAnalysisData, AnalysisSource } from "../types";
 
+// --- HELPER: Promise timeout (prevents infinite loading when AI stalls) ---
+const withTimeout = async <T,>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+  });
+
+  try {
+    return await Promise.race([promise, timeout]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+};
+
 // API Key validation helper - supports both Vite (browser) and Node.js environments
 const getApiKey = (): string | null => {
   // Try Vite environment variables first (browser)
@@ -1023,11 +1037,17 @@ export const generateMarketArticle = async (seedNews: NewsItem, language: Langua
   `;
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: prompt,
-      config: { responseMimeType: 'application/json' }
-    });
+    // IMPORTANT: Some environments stall indefinitely on the Gemini call (network/CORS/etc.).
+    // Guard with a timeout so the UI can recover and show fallback content.
+    const response = await withTimeout(
+      ai.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: prompt,
+        config: { responseMimeType: 'application/json' }
+      }),
+      25_000,
+      'generateMarketArticle'
+    );
     const data = cleanAndParseJSON(response.text || "{}");
     if (!data) {
       console.warn("Failed to parse article response");
